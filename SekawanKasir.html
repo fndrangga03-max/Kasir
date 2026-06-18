@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sekawan Kafe - Sistem Kasir Offline</title>
+    <!-- Library CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Library Eksternal untuk PDF (Di-cache agar bisa offline) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -36,17 +41,38 @@
 </head>
 <body class="bg-cafe-bg text-gray-800 font-sans h-[100dvh] flex flex-col overflow-hidden w-full max-w-[100vw]">
 
+    <!-- ELEMEN TERSEMBUNYI UNTUK GENERATOR STRUK PDF -->
+    <div id="receipt-template" class="fixed top-[-9999px] left-[-9999px] z-[-100] bg-white text-black p-4 w-[300px]" style="font-family: monospace;">
+        <h2 class="text-center font-bold text-xl mb-1">SEKAWAN KAFE</h2>
+        <p class="text-center text-[10px] mb-2 leading-tight">Perumahan sumbersari permai 2,<br>kramat 2, blok AA.08</p>
+        <div class="border-t border-dashed border-gray-500 my-2"></div>
+        <div class="text-xs space-y-1">
+            <div class="flex justify-between"><span>ID:</span> <span id="r-id" class="font-bold"></span></div>
+            <div class="flex justify-between"><span>Tgl:</span> <span id="r-tgl"></span></div>
+            <div class="flex justify-between"><span>Plg:</span> <span id="r-plg"></span></div>
+            <div class="flex justify-between"><span>Tipe:</span> <span id="r-tipe"></span></div>
+        </div>
+        <div class="border-t border-dashed border-gray-500 my-2"></div>
+        <table class="w-full text-xs" id="r-items"></table>
+        <div class="border-t border-dashed border-gray-500 my-2"></div>
+        <div class="flex justify-between font-bold text-sm">
+            <span>TOTAL</span> <span id="r-total"></span>
+        </div>
+        <div id="r-payment-info" class="text-xs mt-1 space-y-1 font-semibold"></div>
+        <div class="border-t border-dashed border-gray-500 my-2"></div>
+        <p class="text-center text-xs mt-2">Terima Kasih Atas Kunjungan Anda!</p>
+        <p class="text-center text-[10px] text-gray-500 mt-1">Sistem SekawanPOS</p>
+    </div>
+
+    <!-- Header & Navigasi -->
     <header class="bg-white shadow-md z-10 flex-shrink-0 w-full">
         <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row justify-between items-center py-2 sm:h-16 gap-2 sm:gap-0">
-                
                 <div class="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
                     <div class="bg-cafe-dark text-white px-3 py-1.5 sm:p-2 rounded-lg font-bold text-sm sm:text-xl shadow-sm whitespace-nowrap">☕ Sekawan Kafe</div>
-                    
                     <button onclick="installPWA()" id="btn-install-pwa" class="hidden bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[10px] sm:text-xs font-bold shadow flex items-center gap-1 transition-all animate-pulse">
                         📲 Install App
                     </button>
-
                     <span class="text-xs sm:text-sm text-gray-500 hidden md:block">Sistem POS & Kalkulasi Laba</span>
                 </div>
                 
@@ -61,8 +87,10 @@
 
     <main class="flex-1 overflow-hidden relative w-full">
 
+        <!-- HALAMAN 1: KASIR -->
         <div id="page-kasir" class="h-full w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-3 flex flex-col lg:flex-row gap-4 overflow-y-auto lg:overflow-hidden pb-20 lg:pb-3">
             
+            <!-- Grid Menu -->
             <div class="h-[40vh] min-h-[200px] flex-none lg:h-auto lg:flex-1 flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-3 sm:p-4 bg-cafe-cream border-b border-cafe-latte flex justify-between items-center">
                     <span class="font-semibold text-cafe-dark text-sm sm:text-base">Daftar Menu</span>
@@ -77,19 +105,20 @@
                 </div>
             </div>
 
+            <!-- Keranjang & Pembayaran -->
             <div class="flex-none w-full lg:w-96 flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden lg:h-full">
                 <div class="p-3 sm:p-4 bg-cafe-dark text-white font-semibold flex justify-between items-center">
                     <span class="text-sm sm:text-base">Keranjang Belanja</span>
                     <button onclick="clearCart()" class="text-xs sm:text-sm text-cafe-latte hover:text-white">Kosongkan</button>
                 </div>
                 
-                <div id="cart-items" class="max-h-[25vh] min-h-[100px] lg:max-h-none lg:flex-1 overflow-y-auto p-3 sm:p-4 relative border-b lg:border-none">
+                <div id="cart-items" class="max-h-[20vh] min-h-[80px] lg:max-h-none lg:flex-1 overflow-y-auto p-3 sm:p-4 relative border-b lg:border-none">
                     <div class="text-center text-gray-400 text-sm mt-2 lg:mt-10 w-full" id="empty-cart-msg">Keranjang kosong</div>
                     <div id="cart-list" class="space-y-2 w-full"></div>
                 </div>
 
                 <div class="p-3 sm:p-4 bg-gray-50 border-t border-gray-200">
-                    <div class="flex justify-between font-bold text-base sm:text-lg mb-3 sm:mb-4 text-cafe-dark">
+                    <div class="flex justify-between font-bold text-base sm:text-lg mb-2 sm:mb-4 text-cafe-dark">
                         <span>Total:</span>
                         <span id="cart-total" data-value="0">Rp 0</span>
                     </div>
@@ -123,12 +152,16 @@
                             <span id="kembalian-amount" class="text-green-600">Rp 0</span>
                         </div>
                         
+                        <!-- TOMBOL CHECKOUT 3 OPSI (PDF, PRINT, SELESAI) -->
+                        <button onclick="processCheckout('none')" class="w-full bg-white text-cafe-dark border-2 border-cafe-brown hover:bg-gray-50 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm mt-2">
+                            Selesaikan Pembayaran
+                        </button>
                         <div class="grid grid-cols-2 gap-2 mt-2">
-                            <button onclick="processCheckout(false)" class="w-full bg-white text-cafe-dark border-2 border-cafe-brown hover:bg-gray-50 py-2.5 sm:py-3 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm">
-                                Selesaikan Saja
+                            <button onclick="processCheckout('pdf')" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-md flex items-center justify-center gap-1">
+                                📄 Unduh PDF
                             </button>
-                            <button onclick="processCheckout(true)" class="w-full bg-cafe-brown hover:bg-cafe-dark text-white py-2.5 sm:py-3 rounded-lg font-bold text-xs sm:text-sm transition shadow-md flex items-center justify-center gap-1">
-                                🖨️ Selesai & Cetak
+                            <button onclick="processCheckout('bluetooth')" class="w-full bg-cafe-brown hover:bg-cafe-dark text-white py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-md flex items-center justify-center gap-1">
+                                🖨️ Cetak BT
                             </button>
                         </div>
                     </div>
@@ -136,9 +169,9 @@
             </div>
         </div>
 
+        <!-- HALAMAN 2: STOK & RESEP -->
         <div id="page-stok" class="h-full w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-3 sm:py-4 hidden-page overflow-y-auto pb-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 pb-12">
-                
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-5">
                     <h2 class="font-bold text-base sm:text-lg text-cafe-dark mb-3 sm:mb-4 border-b pb-2 flex justify-between">
                         <span>📦 Kelola Bahan Baku & HPP</span>
@@ -171,18 +204,14 @@
                 </div>
 
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-5">
-                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b pb-2 mb-3 sm:mb-4 gap-2">
-                        <h2 class="font-bold text-base sm:text-lg text-cafe-dark">☕ Kelola Produk & Menu</h2>
-                        
-                        <div class="flex flex-wrap gap-2 w-full lg:w-auto">
-                            <button onclick="pullFromGSheets(this)" class="flex-1 lg:flex-none bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2 py-1.5 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm whitespace-nowrap">
-                                📥 Pull Data Cloud
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-2 mb-3 sm:mb-4 gap-2">
+                        <h2 class="font-bold text-base sm:text-lg text-cafe-dark">☕ Kelola Produk Menu</h2>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button onclick="resetDatabaseToDump()" class="flex-1 sm:flex-none bg-orange-500 hover:bg-orange-600 text-white px-2 py-1.5 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm whitespace-nowrap">
+                                🔄 Input Data Kafe
                             </button>
-                            <button onclick="pushToGSheets(this)" class="flex-1 lg:flex-none bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2 py-1.5 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm whitespace-nowrap">
-                                ☁️ Push ke Cloud
-                            </button>
-                            <button onclick="exportMenuCSV()" class="flex-1 lg:flex-none bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm whitespace-nowrap">
-                                💾 Ekspor CSV
+                            <button onclick="exportMenuCSV()" class="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm whitespace-nowrap">
+                                📥 Ekspor Menu
                             </button>
                         </div>
                     </div>
@@ -243,10 +272,10 @@
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
 
+        <!-- HALAMAN 3: LAPORAN & CLOUD -->
         <div id="page-laporan" class="h-full w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-3 sm:py-4 hidden-page overflow-y-auto pb-20">
             
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 mb-4 sm:mb-6">
@@ -269,11 +298,11 @@
                 
                 <div class="bg-blue-50 rounded-xl shadow-sm border border-blue-200 flex items-center justify-center overflow-hidden col-span-2 md:col-span-4 lg:col-span-2">
                     <div class="flex w-full h-full divide-x divide-blue-200">
-                        <button onclick="pushToGSheets(this)" class="flex-1 flex flex-col items-center justify-center gap-1 text-blue-700 font-bold py-2 px-1 text-[9px] sm:text-[10px] hover:bg-blue-100 transition">
+                        <button onclick="pushToGSheets()" id="btn-push" class="flex-1 flex flex-col items-center justify-center gap-1 text-blue-700 font-bold py-2 px-1 text-[9px] sm:text-[10px] hover:bg-blue-100 transition">
                             <span class="text-sm sm:text-base leading-none">☁️</span>
                             <span class="text-center">Kirim<br>(Push)</span>
                         </button>
-                        <button onclick="pullFromGSheets(this)" class="flex-1 flex flex-col items-center justify-center gap-1 text-green-700 font-bold py-2 px-1 text-[9px] sm:text-[10px] hover:bg-green-100 transition">
+                        <button onclick="pullFromGSheets()" id="btn-pull" class="flex-1 flex flex-col items-center justify-center gap-1 text-green-700 font-bold py-2 px-1 text-[9px] sm:text-[10px] hover:bg-green-100 transition">
                             <span class="text-sm sm:text-base leading-none">📥</span>
                             <span class="text-center">Tarik<br>(Pull)</span>
                         </button>
@@ -286,11 +315,8 @@
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-12 w-full">
-                <div class="p-3 sm:p-4 bg-cafe-cream border-b border-cafe-latte font-semibold text-cafe-dark text-sm sm:text-base flex justify-between items-center">
-                    <span>Riwayat Penjualan & Kasbon</span>
-                    <button onclick="resetDatabaseToDump()" class="text-[10px] sm:text-xs text-orange-600 hover:text-orange-800 font-bold underline cursor-pointer bg-transparent border-0 outline-none">
-                        ⚠️ Ulang Data Kafe
-                    </button>
+                <div class="p-3 sm:p-4 bg-cafe-cream border-b border-cafe-latte font-semibold text-cafe-dark text-sm sm:text-base">
+                    Riwayat Penjualan & Kasbon
                 </div>
                 <div class="overflow-x-auto w-full">
                     <table class="w-full text-xs sm:text-sm text-left">
@@ -301,7 +327,7 @@
                                 <th class="p-2 sm:p-3 min-w-[120px]">Item Dibeli</th>
                                 <th class="p-2 sm:p-3 text-right whitespace-nowrap">Omset (Rp)</th>
                                 <th class="p-2 sm:p-3 text-right text-green-600 whitespace-nowrap">Laba (Rp)</th>
-                                <th class="p-2 sm:p-3 text-center whitespace-nowrap">Aksi</th>
+                                <th class="p-2 sm:p-3 text-center whitespace-nowrap min-w-[130px]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="table-laporan" class="divide-y"></tbody>
@@ -312,7 +338,7 @@
     </main>
 
     <script>
-        // --- 1. GENERATOR ID & CONFIG ---
+        // --- 1. GENERATOR ID & SETUP ---
         const generateID = (prefix) => prefix + '-' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random() * 1000);
         const DB_NAME = 'SekawanKafe_DB';
         const DB_VERSION = 3; 
@@ -322,7 +348,7 @@
         let globalProdukMap = {};
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz8CoK3FHKHfdY4sRi2RLFfubRaabTqWzYY2imvAe_du6yQ3ph6jthVGONMcmmz_vcF/exec";
 
-        // DATA DUMP (UJI COBA)
+        // DATA DARI SPREADSHEET KAFE
         const dumpBahan = [
             { id: 'B-DUMP01', nama_bahan: 'Kopi Robusta', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1500.0 },
             { id: 'B-DUMP02', nama_bahan: 'Kopi Kahyangan 1saset', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1020.0 },
@@ -518,7 +544,9 @@
             dumpBahan.forEach(b => txSeed.objectStore('bahan_baku').put(b)); 
             dumpProduk.forEach(p => txSeed.objectStore('produk').put(p));
             dumpResep.forEach(r => txSeed.objectStore('resep').put(r));
-            txSeed.oncomplete = () => refreshAllData();
+            txSeed.oncomplete = () => {
+                refreshAllData();
+            };
         }
 
         function resetDatabaseToDump() {
@@ -540,6 +568,7 @@
         function switchTab(tabId) {
             ['page-kasir', 'page-stok', 'page-laporan'].forEach(id => document.getElementById(id).classList.add('hidden-page'));
             ['tab-kasir', 'tab-stok', 'tab-laporan'].forEach(id => document.getElementById(id).classList.remove('tab-active'));
+            
             document.getElementById(`page-${tabId}`).classList.remove('hidden-page');
             document.getElementById(`tab-${tabId}`).classList.add('tab-active');
             if(tabId === 'laporan') renderLaporan();
@@ -549,12 +578,15 @@
             try {
                 const allP = await getDBData('produk');
                 globalProdukMap = allP.reduce((acc, p) => ({...acc, [p.id]: p}), {});
+
                 await renderProdukKasir();
                 await renderTabelBahan();
                 await renderTabelProduk();
                 await populateDropdowns();
                 await renderLaporan(); 
-            } catch (error) { console.error("Gagal sinkronisasi data UI:", error); }
+            } catch (error) {
+                console.error("Gagal sinkronisasi data UI:", error);
+            }
         }
 
         // --- 5. ENGINE HALAMAN KASIR ---
@@ -568,6 +600,7 @@
                 const produk = await getDBData('produk');
                 const grid = document.getElementById('product-grid');
                 const filtered = produk.filter(p => currentKategoriFilter === 'Semua' || p.kategori === currentKategoriFilter);
+
                 grid.innerHTML = filtered.map(p => `
                     <div onclick="addToCart('${p.id}')" class="bg-white border hover:border-cafe-brown cursor-pointer p-3 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition flex flex-col items-center text-center">
                         <div class="h-10 w-10 sm:h-14 sm:w-14 bg-cafe-cream rounded-full flex items-center justify-center mb-2 shadow-inner text-lg sm:text-xl">
@@ -581,21 +614,25 @@
         }
 
         function addToCart(id) {
-            const p = globalProdukMap[id];
-            if (!p) return alert("Menu tidak ditemukan!");
-            const existing = cart.find(item => item.id === id);
-            if (existing) existing.qty++;
-            else cart.push({ id: p.id, nama: p.nama_produk, harga: p.harga_jual, qty: 1 });
-            renderCart();
+            try {
+                const p = globalProdukMap[id];
+                if (!p) return alert("Menu tidak ditemukan!");
+                const existing = cart.find(item => item.id === id);
+                if (existing) existing.qty++;
+                else cart.push({ id: p.id, nama: p.nama_produk, harga: p.harga_jual, qty: 1 });
+                renderCart();
+            } catch(e) { console.error(e); }
         }
 
         function updateCartQty(id, change) {
-            const item = cart.find(i => i.id === id);
-            if (item) {
-                item.qty += change;
-                if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
-                renderCart();
-            }
+            try {
+                const item = cart.find(i => i.id === id);
+                if (item) {
+                    item.qty += change;
+                    if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+                    renderCart();
+                }
+            } catch(e) { console.error(e); }
         }
 
         function clearCart() {
@@ -682,7 +719,61 @@
             }
         }
 
-        // --- 6. LOGIKA CHECKOUT & BLUETOOTH PRINTER ---
+        // --- 6. LOGIKA CHECKOUT, BLUETOOTH & PDF PRINTER ---
+        
+        async function generatePDF(trxData, cashAmount, kembalian) {
+            document.getElementById('r-id').innerText = trxData.id.split('-')[1] || trxData.id;
+            document.getElementById('r-tgl').innerText = trxData.tanggal_waktu;
+            document.getElementById('r-plg').innerText = trxData.nama_pelanggan || 'Umum';
+            document.getElementById('r-tipe').innerText = `${trxData.status_pembayaran} (${trxData.metode_pembayaran})`;
+
+            const itemsContainer = document.getElementById('r-items');
+            itemsContainer.innerHTML = '';
+            trxData.detail_item.forEach(item => {
+                const tr1 = document.createElement('tr');
+                tr1.innerHTML = `<td colspan="2" class="pb-1">${item.nama}</td>`;
+                const tr2 = document.createElement('tr');
+                tr2.innerHTML = `
+                    <td class="pb-2 text-gray-600">${item.qty}x ${formatRp(item.harga).replace('Rp','').trim()}</td>
+                    <td class="pb-2 text-right font-semibold">${formatRp(item.harga * item.qty).replace('Rp','').trim()}</td>
+                `;
+                itemsContainer.appendChild(tr1);
+                itemsContainer.appendChild(tr2);
+            });
+
+            document.getElementById('r-total').innerText = formatRp(trxData.total_bayar);
+            const paymentInfo = document.getElementById('r-payment-info');
+            
+            if (trxData.status_pembayaran !== 'Hutang') {
+                paymentInfo.innerHTML = `
+                    <div class="flex justify-between"><span>TUNAI/BAYAR</span> <span>${formatRp(cashAmount || trxData.total_bayar)}</span></div>
+                    <div class="flex justify-between"><span>KEMBALI</span> <span>${formatRp(kembalian || 0)}</span></div>
+                `;
+            } else {
+                paymentInfo.innerHTML = `<div class="text-center italic text-red-500 mt-2">BELUM LUNAS (KASBON)</div>`;
+            }
+
+            try {
+                const element = document.getElementById('receipt-template');
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+                const imgData = canvas.toDataURL('image/png');
+                
+                const imgWidth = 80; 
+                const pageHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [imgWidth, pageHeight] });
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, pageHeight);
+                pdf.save(`Struk_SekawanKafe_${trxData.id.split('-')[1] || trxData.id}.pdf`);
+                return true;
+            } catch(e) {
+                console.error(e);
+                alert("Gagal membuat PDF.");
+                return false;
+            }
+        }
+
         async function printReceipt(trxData, cashAmount, kembalian) {
             try {
                 const device = await navigator.bluetooth.requestDevice({
@@ -704,8 +795,11 @@
                 const LINE = "--------------------------------\n"; 
 
                 let receipt = CENTER + BOLD_ON + DOUBLE_HEIGHT + "SEKAWAN KAFE\n" + NORMAL_SIZE + BOLD_OFF;
-                receipt += CENTER + "Jl. Kenangan No. 1, Jember\n" + CENTER + LINE;
-                receipt += LEFT + "ID : " + trxData.id.split('-')[1] + "\n";
+                receipt += CENTER + "Perumahan sumbersari permai 2,\n";
+                receipt += CENTER + "kramat 2, blok AA.08\n" + CENTER + LINE;
+                
+                receipt += LEFT;
+                receipt += "ID : " + trxData.id.split('-')[1] + "\n";
                 receipt += "Tgl: " + trxData.tanggal_waktu + "\n";
                 receipt += "Plg: " + (trxData.nama_pelanggan || 'Umum') + "\n";
                 receipt += "Tipe: " + trxData.status_pembayaran + " (" + trxData.metode_pembayaran + ")\n" + LINE;
@@ -747,9 +841,9 @@
             }
         }
 
-        async function processCheckout(wantsToPrint) {
+        async function processCheckout(actionType) {
             if (cart.length === 0) return alert("Keranjang kosong!");
-            if (wantsToPrint && !navigator.bluetooth) {
+            if (actionType === 'bluetooth' && !navigator.bluetooth) {
                 alert("Maaf, browser ini tidak mendukung fitur cetak Bluetooth langsung dari web.");
                 return;
             }
@@ -826,10 +920,13 @@
                 reqAdd.onerror = () => alert("Gagal memproses transaksi.");
 
                 txWrite.oncomplete = async () => {
-                    if (wantsToPrint) {
+                    if (actionType === 'bluetooth') {
                         const printSuccess = await printReceipt(dataPenjualan, cash, kembalian);
                         if (printSuccess) alert("✅ Transaksi Berhasil & Struk Sedang Dicetak!");
                         else alert("✅ Transaksi Berhasil disimpan, tapi Struk Gagal dicetak.");
+                    } else if (actionType === 'pdf') {
+                        await generatePDF(dataPenjualan, cash, kembalian);
+                        alert("✅ Transaksi Berhasil & PDF Struk Berhasil Diunduh!");
                     } else {
                         alert(status_pembayaran === 'Hutang' ? "📝 Transaksi Kasbon berhasil dicatat!" : "✅ Transaksi Lunas Berhasil!");
                     }
@@ -1113,11 +1210,13 @@
                         ? `<span class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold border border-pink-200">KASBON</span>` 
                         : `<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold border border-green-200">LUNAS</span>`;
 
-                    let actionBtns = `<button onclick="batalkanTransaksi('${trx.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1.5 rounded text-[10px] sm:text-[11px] border border-red-200 transition">❌ Batal</button>`;
-                    const btnPrint = `<button onclick="reprintReceipt('${trx.id}')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1.5 rounded text-[10px] sm:text-[11px] border border-gray-300 transition w-full shadow-sm mb-1">🖨️ Cetak</button>`;
+                    let btnPrintBT = `<button onclick="reprintReceipt('${trx.id}', 'bluetooth')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1.5 rounded text-[10px] sm:text-[11px] border border-gray-300 transition flex-1 shadow-sm">🖨️ BT</button>`;
+                    let btnPrintPDF = `<button onclick="reprintReceipt('${trx.id}', 'pdf')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1.5 rounded text-[10px] sm:text-[11px] border border-red-200 transition flex-1 shadow-sm">📄 PDF</button>`;
+                    let printGroup = `<div class="flex gap-1 mb-1 w-full">${btnPrintBT}${btnPrintPDF}</div>`;
 
-                    if (isHutang) actionBtns = `<button onclick="lunasiTransaksi('${trx.id}')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1.5 rounded text-[10px] sm:text-[11px] font-bold transition mb-1 w-full shadow-sm">💸 Lunasi</button>` + btnPrint + actionBtns;
-                    else actionBtns = btnPrint + actionBtns;
+                    let actionBtns = `<button onclick="batalkanTransaksi('${trx.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1.5 rounded text-[10px] sm:text-[11px] border border-red-200 transition w-full">❌ Batal</button>`;
+                    if (isHutang) actionBtns = `<button onclick="lunasiTransaksi('${trx.id}')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1.5 rounded text-[10px] sm:text-[11px] font-bold transition mb-1 w-full shadow-sm">💸 Lunasi</button>` + printGroup + actionBtns;
+                    else actionBtns = printGroup + actionBtns;
 
                     const labaTampil = isHutang ? `<span class="text-gray-400 text-[10px] sm:text-xs italic">Menunggu...</span>` : `<span class="text-green-600">${formatRp(labaTrx)}</span>`;
 
@@ -1132,18 +1231,24 @@
                         <td class="p-2 sm:p-3 min-w-[120px] font-medium text-gray-700">${itemsStr}</td>
                         <td class="p-2 sm:p-3 font-bold text-right whitespace-nowrap ${isHutang ? 'text-pink-600' : 'text-gray-800'}">${formatRp(trx.total_bayar)}</td>
                         <td class="p-2 sm:p-3 font-bold text-right bg-green-50/30 whitespace-nowrap">${labaTampil}</td>
-                        <td class="p-2 sm:p-3 text-center flex flex-col items-center justify-center gap-1">${actionBtns}</td>
+                        <td class="p-2 sm:p-3 text-center flex flex-col items-center justify-center gap-1 min-w-[100px]">${actionBtns}</td>
                     </tr>`
                 }).join('');
             } catch(e) { console.error(e); }
         }
 
-        async function reprintReceipt(id) {
+        async function reprintReceipt(id, type) {
             try {
-                if (!navigator.bluetooth) return alert("Browser tidak support Bluetooth.");
                 const trxList = await getDBData('penjualan');
                 const trx = trxList.find(t => t.id === id);
-                if(trx) await printReceipt(trx, trx.total_bayar, 0); 
+                if(!trx) return alert("Transaksi tidak ditemukan.");
+                
+                if (type === 'bluetooth') {
+                    if (!navigator.bluetooth) return alert("Browser tidak support Bluetooth.");
+                    await printReceipt(trx, trx.total_bayar, 0); 
+                } else if (type === 'pdf') {
+                    await generatePDF(trx, trx.total_bayar, 0);
+                }
             } catch(e) { console.error(e); }
         }
 
@@ -1190,29 +1295,26 @@
             } catch(e) { console.error(e); }
         }
 
-        // FUNGSI SINKRONISASI PUSH & PULL 
-        async function pushToGSheets(btn) {
-            btn = btn || document.getElementById('btn-push');
-            const originalText = btn.innerHTML;
+        async function pushToGSheets() {
+            const btn = document.getElementById('btn-push');
             try {
                 const p = await getDBData('penjualan'), b = await getDBData('bahan_baku'), pr = await getDBData('produk'), r = await getDBData('resep');
                 if(p.length===0 && pr.length===0 && b.length===0) return alert("Tidak ada data untuk di-push.");
-                btn.innerHTML = '⏳...'; btn.disabled = true;
+                btn.innerHTML = '⏳ Tunggu...'; btn.disabled = true;
 
                 const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({penjualan: p, bahan_baku: b, produk: pr, resep: r}) });
                 const result = await res.json();
                 if(result.status === "sukses") alert("☁️ Data berhasil di-Push ke Google Sheets!");
                 else alert("Server Error: " + result.error);
-            } catch(e) { alert("Gagal Push. Cek koneksi internet."); } 
-            finally { btn.innerHTML = originalText; btn.disabled = false; }
+            } catch(e) { alert("Gagal Push. Cek internet."); } 
+            finally { btn.innerHTML = '<span class="text-sm sm:text-base leading-none">☁️</span><span class="text-center">Kirim<br>(Push)</span>'; btn.disabled = false; }
         }
 
-        async function pullFromGSheets(btn) {
-            if(!confirm("📥 Tarik data akan menimpa seluruh data lokal perangkat ini. Lanjutkan?")) return;
-            btn = btn || document.getElementById('btn-pull');
-            const originalText = btn.innerHTML;
+        async function pullFromGSheets() {
+            if(!confirm("📥 Tarik data akan menimpa seluruh data lokal. Lanjutkan?")) return;
+            const btn = document.getElementById('btn-pull');
             try {
-                btn.innerHTML = '⏳...'; btn.disabled = true;
+                btn.innerHTML = '⏳ Tunggu...'; btn.disabled = true;
                 const res = await fetch(GAS_URL);
                 const result = await res.json();
                 if(result.status !== "sukses") throw new Error("Gagal ambil data");
@@ -1221,26 +1323,16 @@
                 const tx = db.transaction(['penjualan', 'bahan_baku', 'produk', 'resep'], 'readwrite');
                 ['penjualan', 'bahan_baku', 'produk', 'resep'].forEach(store => tx.objectStore(store).clear());
 
-                cloud.bahan_baku.forEach(b => {
-                    if(!b['Nama Bahan']) return;
-                    tx.objectStore('bahan_baku').put({id: String(b.ID || generateID('B')), nama_bahan: String(b['Nama Bahan']), stok_saat_ini: parseFloat(b.Stok||0), satuan: String(b.Satuan||'Pcs'), hpp: parseFloat(b.HPP||0)});
-                });
-                cloud.produk.forEach(p => {
-                    if(!p['Nama Produk']) return;
-                    tx.objectStore('produk').put({id: String(p.ID || generateID('P')), nama_produk: String(p['Nama Produk']), kategori: String(p.Kategori||'Minuman'), harga_jual: parseFloat(p['Harga Jual']||0)});
-                });
-                cloud.resep.forEach(r => {
-                    if(!r['ID Produk'] || !r['ID Bahan Baku']) return;
-                    tx.objectStore('resep').put({id: String(r.ID || generateID('R')), id_produk: String(r['ID Produk']), id_bahan_baku: String(r['ID Bahan Baku']), jumlah_dibutuhkan: parseFloat(r.Jumlah||0)});
-                });
+                cloud.bahan_baku.forEach(b => tx.objectStore('bahan_baku').put({id: b.ID, nama_bahan: b['Nama Bahan'], stok_saat_ini: parseFloat(b.Stok||0), satuan: b.Satuan, hpp: parseFloat(b.HPP||0)}));
+                cloud.produk.forEach(p => tx.objectStore('produk').put({id: p.ID, nama_produk: p['Nama Produk'], kategori: p.Kategori, harga_jual: parseFloat(p['Harga Jual']||0)}));
+                cloud.resep.forEach(r => tx.objectStore('resep').put({id: r.ID || generateID('R'), id_produk: r['ID Produk'], id_bahan_baku: r['ID Bahan Baku'], jumlah_dibutuhkan: parseFloat(r.Jumlah||0)}));
                 cloud.penjualan.forEach(trx => {
-                    if(!trx['ID Transaksi']) return;
                     let det = []; try { det = JSON.parse(trx.Raw_JSON); } catch(e) { det = trx['Detail Item']; }
-                    tx.objectStore('penjualan').put({id: String(trx['ID Transaksi']), tanggal_waktu: String(trx.Waktu), metode_pembayaran: String(trx.Metode), nama_pelanggan: String(trx.Pelanggan||'Umum'), status_pembayaran: String(trx.Status||'Lunas'), total_bayar: parseFloat(trx.Omset||0), total_hpp: parseFloat(trx.HPP||0), laba: parseFloat(trx.Laba||0), detail_item: det});
+                    tx.objectStore('penjualan').put({id: trx['ID Transaksi'], tanggal_waktu: trx.Waktu, metode_pembayaran: trx.Metode, nama_pelanggan: trx.Pelanggan, status_pembayaran: trx.Status, total_bayar: parseFloat(trx.Omset||0), total_hpp: parseFloat(trx.HPP||0), laba: parseFloat(trx.Laba||0), detail_item: det});
                 });
-                tx.oncomplete = () => { alert("📥 Pull sukses! Data tersinkron dengan Cloud."); refreshAllData(); };
+                tx.oncomplete = () => { alert("📥 Pull sukses!"); refreshAllData(); };
             } catch(e) { alert("Gagal Pull. Cek URL / Internet."); } 
-            finally { btn.innerHTML = originalText; btn.disabled = false; }
+            finally { btn.innerHTML = '<span class="text-sm sm:text-base leading-none">📥</span><span class="text-center">Tarik<br>(Pull)</span>'; btn.disabled = false; }
         }
 
         function downloadCSV(content, filename) {
