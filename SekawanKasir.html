@@ -18,9 +18,9 @@
                 extend: {
                     colors: {
                         brand: {
-                            dark: '#1e3a8a',   // Biru Tua Elegan
+                            dark: '#1e3a8a',   // Biru Tua
                             main: '#3b82f6',   // Biru Utama
-                            light: '#bfdbfe',  // Biru Muda (Border)
+                            light: '#bfdbfe',  // Biru Muda
                             soft: '#eff6ff',   // Biru Super Pudar
                         }
                     }
@@ -38,11 +38,10 @@
         .mobile-tab-active .icon { transform: scale(1.15) translateY(-2px); transition: 0.2s; filter: drop-shadow(0 2px 2px rgba(30,58,138,0.3)); }
         
         .hidden-page { display: none !important; }
-        /* Mencegah auto-zoom menjengkelkan di Safari/iPhone */
         input[type="text"], input[type="number"], input[type="date"], select { font-size: 16px !important; }
         
         .item-added { animation: pop 0.3s ease-out; }
-        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans h-[100dvh] w-full flex flex-col overflow-hidden">
@@ -92,11 +91,11 @@
         </div>
     </header>
 
-    <!-- AREA KONTEN (Anti-Scroll Melar) -->
+    <!-- AREA KONTEN (Terkunci Sempurna di Bawah Header dan Di Atas Nav Mobile) -->
     <main class="flex-1 w-full relative overflow-hidden bg-gray-50">
 
         <!-- HALAMAN 1: KASIR -->
-        <div id="page-kasir" class="absolute inset-x-0 top-0 bottom-[calc(55px+env(safe-area-inset-bottom))] md:bottom-0 flex flex-col lg:flex-row gap-2 lg:gap-4 p-2 sm:p-4 overflow-hidden">
+        <div id="page-kasir" class="absolute inset-x-0 top-0 bottom-[calc(55px+env(safe-area-inset-bottom))] md:bottom-0 flex flex-col lg:flex-row gap-3 lg:gap-4 p-2 sm:p-4 overflow-hidden">
             
             <!-- KIRI: KOTAK MENU -->
             <div class="flex-[55] lg:flex-[3] min-h-0 flex flex-col bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
@@ -117,7 +116,7 @@
                     </div>
                 </div>
                 <!-- Area Scroll Menu -->
-                <div class="flex-1 min-h-0 overflow-y-auto p-2 sm:p-4 bg-gray-50/50 relative">
+                <div class="flex-1 min-h-0 overflow-y-auto p-2 sm:p-4 bg-gray-50/50">
                     <div id="product-grid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 pb-2"></div>
                 </div>
             </div>
@@ -126,11 +125,11 @@
             <div class="flex-[45] lg:flex-none lg:w-[350px] min-h-0 flex flex-col bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
                 <div class="p-2 sm:p-3 bg-brand-dark text-white font-semibold flex justify-between items-center flex-shrink-0">
                     <span class="text-sm flex items-center gap-1">🛒 Keranjang</span>
-                    <button onclick="clearCart()" class="text-[10px] sm:text-xs text-brand-light hover:text-white transition bg-white/10 px-2 py-1 rounded">Kosongkan</button>
+                    <button onclick="clearCart()" class="text-[10px] sm:text-xs text-brand-light hover:text-white transition bg-white/10 px-2 py-1 rounded cursor-pointer">Kosongkan</button>
                 </div>
                 
                 <!-- Area Scroll Keranjang -->
-                <div id="cart-items" class="flex-1 min-h-0 overflow-y-auto p-2 sm:p-3 bg-white border-b border-gray-100 relative">
+                <div id="cart-items" class="flex-1 min-h-0 overflow-y-auto p-2 sm:p-3 bg-white border-b border-gray-100">
                     <div class="text-center text-gray-400 text-xs sm:text-sm mt-4 w-full" id="empty-cart-msg">Belum ada pesanan</div>
                     <div id="cart-list" class="space-y-2 w-full pb-2"></div>
                 </div>
@@ -145,16 +144,16 @@
                     <div class="space-y-2">
                         <div class="flex gap-2">
                             <input type="text" id="customer-name" class="flex-[2] w-full p-1.5 sm:p-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-brand-light focus:border-brand-main shadow-sm text-xs sm:text-sm" placeholder="Nama Plg...">
-                            <select id="payment-method" class="flex-[2] w-full p-1.5 sm:p-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-brand-light focus:border-brand-main shadow-sm text-xs sm:text-sm font-semibold" onchange="toggleCashInput()">
-                                <option value="Tunai">💵 Tunai</option><option value="QRIS">📱 QRIS</option>
-                                <option value="Split Bill" class="text-blue-600 font-bold">💳 Split</option>
-                                <option value="Kasbon">📝 Kasbon</option><option value="Konsumsi" class="text-purple-600">🍽️ Knsmsi</option>
+                            <select id="payment-method" class="flex-[2] w-full p-1.5 sm:p-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-brand-light focus:border-brand-main shadow-sm text-xs sm:text-sm font-semibold cursor-pointer" onchange="toggleCashInput()">
+                                <option value="Tunai">💵 Tunai Saja</option><option value="QRIS">📱 QRIS Saja</option>
+                                <option value="Split Bill" class="text-blue-600 font-bold">💳 Split Bill</option>
+                                <option value="Kasbon">📝 Kasbon</option><option value="Konsumsi" class="text-purple-600">🍽️ Konsumsi</option>
                             </select>
                         </div>
                         
                         <div class="flex gap-1 items-stretch" id="cash-input-container">
-                            <input type="number" id="cash-amount" class="flex-1 w-full p-1.5 sm:p-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-brand-light focus:border-brand-main shadow-sm text-xs sm:text-sm" placeholder="Nominal Uang (Rp)">
-                            <button onclick="setUangPas()" class="bg-brand-soft border border-brand-light hover:bg-brand-main hover:text-white text-brand-dark px-3 rounded-md text-xs sm:text-sm font-bold transition shadow-sm h-full flex items-center justify-center">Pas</button>
+                            <input type="number" id="cash-amount" class="flex-1 w-full p-1.5 sm:p-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-brand-light focus:border-brand-main shadow-sm text-xs sm:text-sm" placeholder="Uang Fisik (Rp)">
+                            <button onclick="setUangPas()" class="bg-brand-soft border border-brand-light hover:bg-brand-main hover:text-white text-brand-dark px-3 rounded-md text-xs sm:text-sm font-bold transition shadow-sm h-full flex items-center justify-center cursor-pointer">Pas</button>
                         </div>
 
                         <div class="flex gap-1 hidden" id="split-input-container">
@@ -163,13 +162,13 @@
                         </div>
 
                         <div class="text-[10px] sm:text-xs font-semibold flex justify-between text-gray-600 hidden bg-green-50 p-1.5 rounded border border-green-200" id="kembalian-container">
-                            <span>Kembalian:</span><span id="kembalian-amount" class="text-green-600 font-bold">Rp 0</span>
+                            <span>Kembalian Tunai:</span><span id="kembalian-amount" class="text-green-600 font-bold text-sm sm:text-base">Rp 0</span>
                         </div>
                         
                         <div class="flex gap-1 pt-1">
-                            <button onclick="processCheckout('none')" class="flex-1 bg-brand-main hover:bg-brand-dark text-white py-1.5 sm:py-2 rounded-lg font-bold text-[10px] sm:text-xs transition shadow-md">✅ Selesai</button>
-                            <button onclick="processCheckout('pdf')" class="bg-orange-500 hover:bg-orange-600 text-white px-2 py-1.5 sm:py-2 rounded-lg font-bold text-[10px] sm:text-xs transition shadow-md">📄 PDF</button>
-                            <button onclick="processCheckout('bluetooth')" class="bg-gray-800 hover:bg-black text-white px-2 py-1.5 sm:py-2 rounded-lg font-bold text-[10px] sm:text-xs transition shadow-md">🖨️ BT</button>
+                            <button onclick="processCheckout('none')" class="flex-1 bg-brand-main hover:bg-brand-dark text-white py-2 rounded-lg font-bold text-[11px] sm:text-xs transition shadow-md cursor-pointer">✅ Selesai</button>
+                            <button onclick="processCheckout('pdf')" class="bg-orange-500 hover:bg-orange-600 text-white px-2.5 py-2 rounded-lg font-bold text-[11px] sm:text-xs transition shadow-md cursor-pointer">📄 PDF</button>
+                            <button onclick="processCheckout('bluetooth')" class="bg-gray-800 hover:bg-black text-white px-2.5 py-2 rounded-lg font-bold text-[11px] sm:text-xs transition shadow-md cursor-pointer">🖨️ BT</button>
                         </div>
                     </div>
                 </div>
@@ -177,33 +176,32 @@
         </div>
 
         <!-- HALAMAN 2: STOK & MENU -->
-        <div id="page-stok" class="absolute inset-x-0 top-0 bottom-[calc(55px+env(safe-area-inset-bottom))] md:bottom-0 hidden-page overflow-y-auto p-3 sm:p-6 pb-6">
+        <div id="page-stok" class="absolute inset-x-0 top-0 bottom-[calc(55px+env(safe-area-inset-bottom))] md:bottom-0 hidden-page overflow-y-auto p-3 sm:p-6">
             <div class="max-w-7xl mx-auto">
-                
                 <div class="bg-brand-soft rounded-xl shadow-sm border border-brand-light p-3 sm:p-4 mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
                         <h3 class="font-bold text-brand-dark text-sm sm:text-base">☁️ Sync Cloud (Spreadsheet)</h3>
                         <p class="text-[10px] sm:text-xs text-brand-main mt-0.5">Tarik data atau Ekspor Menu ke Spreadsheet.</p>
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
-                        <button onclick="pullFromGSheets(this)" class="flex-1 sm:flex-none bg-white text-brand-main hover:bg-brand-soft border border-brand-light px-3 py-2 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm">📥 Pull Data</button>
-                        <button onclick="pushToGSheets(this)" class="flex-1 sm:flex-none bg-brand-main hover:bg-brand-dark text-white px-3 py-2 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm">☁️ Push Data</button>
-                        <button onclick="exportMenuCSV()" class="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm">📄 Ekspor Menu</button>
+                        <button onclick="pullFromGSheets(this)" class="flex-1 sm:flex-none bg-white text-brand-main hover:bg-brand-soft border border-brand-light px-3 py-2 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm cursor-pointer">📥 Pull Data</button>
+                        <button onclick="pushToGSheets(this)" class="flex-1 sm:flex-none bg-brand-main hover:bg-brand-dark text-white px-3 py-2 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm cursor-pointer">☁️ Push Data</button>
+                        <button onclick="exportMenuCSV()" class="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-[10px] sm:text-xs font-bold transition shadow-sm cursor-pointer">📄 Ekspor Menu</button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 pb-6">
                     <div class="bg-white rounded-xl shadow-md border border-gray-100 p-3 sm:p-5 flex flex-col min-h-[50vh]">
                         <h2 class="font-bold text-base sm:text-lg text-brand-dark mb-3 border-b pb-2 flex-shrink-0">📦 Bahan Baku & HPP</h2>
                         <form id="form-bahan" onsubmit="addBahanBaku(event)" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4 flex-shrink-0">
                             <input type="text" id="bahan-nama" placeholder="Nama Bahan" required class="p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none col-span-2 sm:col-span-1 focus:border-brand-main">
-                            <input type="number" id="bahan-stok" placeholder="Stok Awal" required class="p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main">
+                            <input type="number" id="bahan-stok" placeholder="Stok" required class="p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main">
                             <select id="bahan-satuan" class="p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main"><option value="Gram">Gram</option><option value="Ml">Ml</option><option value="Pcs">Pcs</option><option value="Porsi">Porsi</option></select>
                             <input type="number" id="bahan-hpp" placeholder="HPP (Rp)" required class="p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none col-span-2 sm:col-span-3 focus:border-brand-main">
-                            <button type="submit" class="bg-brand-main text-white px-3 py-2 rounded-md text-xs sm:text-sm font-bold hover:bg-brand-dark col-span-2 sm:col-span-1 shadow-sm transition">Simpan</button>
+                            <button type="submit" class="bg-brand-main text-white px-3 py-2 rounded-md text-xs sm:text-sm font-bold hover:bg-brand-dark col-span-2 sm:col-span-1 shadow-sm transition cursor-pointer">Simpan</button>
                         </form>
                         <div class="overflow-x-auto w-full border rounded-lg flex-1">
-                            <table class="w-full text-xs sm:text-sm text-left relative">
+                            <table class="w-full text-xs sm:text-sm text-left">
                                 <thead class="bg-brand-soft text-brand-dark border-b border-brand-light sticky top-0 shadow-sm z-10">
                                     <tr><th class="p-2 whitespace-nowrap">Bahan</th><th class="p-2 whitespace-nowrap">HPP</th><th class="p-2 whitespace-nowrap">Stok</th><th class="p-2 text-center whitespace-nowrap min-w-[100px]">Aksi</th></tr>
                                 </thead>
@@ -215,28 +213,28 @@
                     <div class="bg-white rounded-xl shadow-md border border-gray-100 p-3 sm:p-5 flex flex-col min-h-[50vh]">
                         <div class="flex justify-between items-center border-b pb-2 mb-3 flex-shrink-0">
                             <h2 class="font-bold text-base sm:text-lg text-brand-dark">☕ Menu Produk</h2>
-                            <button onclick="resetDatabaseToDump()" class="bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 px-2 py-1 rounded-md text-[10px] font-bold shadow-sm">⚠️ Default</button>
+                            <button onclick="resetDatabaseToDump()" class="bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 px-2 py-1 rounded-md text-[10px] font-bold shadow-sm cursor-pointer">⚠️ Default</button>
                         </div>
                         
                         <form id="form-produk" onsubmit="addProduk(event)" class="grid grid-cols-2 gap-2 mb-4 flex-shrink-0">
                             <input type="text" id="produk-nama" placeholder="Nama Menu..." required class="col-span-2 sm:col-span-1 p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main">
                             <input type="number" id="produk-harga" placeholder="Harga Jual..." required class="p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main">
                             <select id="produk-kategori" class="p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main"><option value="Minuman">Minuman</option><option value="Makanan">Makanan</option></select>
-                            <button type="submit" class="bg-brand-main text-white p-2 rounded-md text-xs sm:text-sm font-bold hover:bg-brand-dark col-span-2 shadow-sm transition">Tambah Menu</button>
+                            <button type="submit" class="bg-brand-main text-white p-2 rounded-md text-xs sm:text-sm font-bold hover:bg-brand-dark col-span-2 shadow-sm transition cursor-pointer">Tambah Menu</button>
                         </form>
                         
                         <div class="bg-gray-50 p-2 sm:p-3 rounded-xl border border-gray-200 mb-4 shadow-inner flex-shrink-0">
                             <h3 class="font-bold text-xs sm:text-sm mb-2 text-brand-dark flex items-center gap-1"><span>🔗</span> Susun Resep Menu</h3>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                                <select id="resep-produk" class="w-full p-2 border border-gray-300 rounded-md text-[10px] sm:text-xs outline-none bg-white"></select>
-                                <input type="number" step="any" id="resep-jumlah" placeholder="Qty Butuh" class="w-full p-2 border border-gray-300 rounded-md text-[10px] sm:text-xs outline-none bg-white">
-                                <select id="resep-bahan" class="sm:col-span-2 w-full p-2 border border-gray-300 rounded-md text-[10px] sm:text-xs outline-none bg-white"></select>
+                                <select id="resep-produk" class="w-full p-2 border border-gray-300 rounded-md text-[10px] sm:text-xs outline-none bg-white focus:border-brand-main"></select>
+                                <input type="number" step="any" id="resep-jumlah" placeholder="Qty Butuh" class="w-full p-2 border border-gray-300 rounded-md text-[10px] sm:text-xs outline-none bg-white focus:border-brand-main">
+                                <select id="resep-bahan" class="sm:col-span-2 w-full p-2 border border-gray-300 rounded-md text-[10px] sm:text-xs outline-none bg-white focus:border-brand-main"></select>
                             </div>
-                            <button onclick="addResep()" class="w-full bg-brand-dark text-white px-2 py-1.5 rounded-lg text-xs font-bold hover:bg-black shadow-md">Simpan Komposisi</button>
+                            <button onclick="addResep()" class="w-full bg-brand-dark text-white px-2 py-1.5 rounded-lg text-xs font-bold hover:bg-black shadow-md cursor-pointer">Simpan Komposisi</button>
                         </div>
 
                         <div class="overflow-x-auto w-full border rounded-lg flex-1">
-                            <table class="w-full text-xs sm:text-sm text-left relative">
+                            <table class="w-full text-xs sm:text-sm text-left">
                                 <thead class="bg-brand-soft text-brand-dark border-b border-brand-light sticky top-0 shadow-sm z-10">
                                     <tr><th class="p-2 whitespace-nowrap">Menu</th><th class="p-2 hidden sm:table-cell min-w-[120px]">Resep</th><th class="p-2 whitespace-nowrap">Laba</th><th class="p-2 text-center min-w-[70px]">Aksi</th></tr>
                                 </thead>
@@ -249,52 +247,56 @@
         </div>
 
         <!-- HALAMAN 3: LAPORAN KAS -->
-        <div id="page-laporan" class="absolute inset-x-0 top-0 bottom-[calc(55px+env(safe-area-inset-bottom))] md:bottom-0 hidden-page overflow-y-auto p-3 sm:p-6 pb-6">
-            <div class="max-w-7xl mx-auto">
+        <div id="page-laporan" class="absolute inset-x-0 top-0 bottom-[calc(55px+env(safe-area-inset-bottom))] md:bottom-0 hidden-page overflow-y-auto p-3 sm:p-6">
+            <div class="max-w-7xl mx-auto pb-4">
                 
                 <div class="flex flex-col lg:flex-row gap-3 sm:gap-6 mb-4 sm:mb-6">
+                    <!-- FILTER TANGGAL -->
                     <div class="flex-1 bg-white rounded-xl shadow-md border border-gray-100 p-3 sm:p-4">
                         <label class="text-[10px] sm:text-xs font-bold text-gray-500 uppercase block mb-2">📅 Rentang Waktu</label>
                         <div class="flex flex-col sm:flex-row gap-2">
                             <input type="date" id="filter-start" class="flex-1 p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main">
                             <input type="date" id="filter-end" class="flex-1 p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main">
                             <div class="flex gap-1 w-full sm:w-auto">
-                                <button onclick="applyDateFilter()" class="flex-1 bg-brand-main text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm">Cari</button>
-                                <button onclick="resetDateFilter()" class="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-md text-xs font-bold shadow-sm border border-gray-300">Reset</button>
+                                <button onclick="applyDateFilter()" class="flex-1 bg-brand-main text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm cursor-pointer">Cari</button>
+                                <button onclick="resetDateFilter()" class="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-md text-xs font-bold shadow-sm border border-gray-300 cursor-pointer">Reset</button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- CATAT TRX MANUAL -->
                     <div class="flex-1 bg-white rounded-xl shadow-md border border-gray-100 p-3 sm:p-4">
                         <label class="text-[10px] sm:text-xs font-bold text-gray-500 uppercase block mb-2">📝 Jurnal Manual Khusus</label>
                         <div class="flex flex-col sm:flex-row gap-2">
-                            <select id="manual-jenis" class="w-full sm:w-28 p-2 border border-gray-300 rounded-md text-[11px] sm:text-xs outline-none font-bold text-green-600" onchange="toggleManualUI(this)">
-                                <option value="Pemasukan" class="text-green-600">Masuk (+)</option><option value="Pengeluaran" class="text-red-600">Keluar (-)</option>
-                                <option value="NonKas" class="text-purple-600">NonKas (-)</option><option value="Mutasi" class="text-indigo-600">Mutasi 🔄</option>
+                            <select id="manual-jenis" class="w-full sm:w-28 p-2 border border-gray-300 rounded-md text-[11px] sm:text-xs outline-none font-bold text-green-600 cursor-pointer" onchange="toggleManualUI(this)">
+                                <option value="Pemasukan" class="text-green-600">Masuk (+)</option>
+                                <option value="Pengeluaran" class="text-red-600">Keluar (-)</option>
+                                <option value="NonKas" class="text-purple-600">NonKas (-)</option>
+                                <option value="Mutasi" class="text-indigo-600">Mutasi 🔄</option>
                             </select>
                             <input type="text" id="manual-ket" placeholder="Keterangan..." class="flex-1 p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main">
                             <input type="number" id="manual-nom" placeholder="Nominal" class="w-full sm:w-24 p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main">
                             
                             <div id="manual-metode-wrapper" class="w-full sm:w-auto">
-                                <select id="manual-metode" class="w-full p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none"><option value="Tunai">Tunai</option><option value="QRIS">QRIS</option></select>
+                                <select id="manual-metode" class="w-full p-2 border border-gray-300 rounded-md text-xs sm:text-sm outline-none focus:border-brand-main"><option value="Tunai">Tunai</option><option value="QRIS">QRIS</option></select>
                             </div>
                             <div id="manual-mutasi-wrapper" class="hidden w-full sm:w-auto flex items-center gap-1">
-                                <select id="mutasi-dari" class="w-full p-1 border rounded text-[10px]"><option value="Tunai">TNI</option><option value="QRIS">QRS</option></select> <span>➡️</span> <select id="mutasi-ke" class="w-full p-1 border rounded text-[10px]"><option value="QRIS">QRS</option><option value="Tunai">TNI</option></select>
+                                <select id="mutasi-dari" class="w-full p-1 border rounded text-[10px] outline-none"><option value="Tunai">TNI</option><option value="QRIS">QRS</option></select> <span>➡️</span> <select id="mutasi-ke" class="w-full p-1 border rounded text-[10px] outline-none"><option value="QRIS">QRS</option><option value="Tunai">TNI</option></select>
                             </div>
 
-                            <button onclick="addTransaksiManual()" id="btn-manual-submit" class="w-full sm:w-auto bg-green-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm">Simpan</button>
+                            <button onclick="addTransaksiManual()" id="btn-manual-submit" class="w-full sm:w-auto bg-green-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm cursor-pointer">Simpan</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- GRID STATISTIK -->
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3 mb-4 sm:mb-6">
-                    <div class="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-l-4 border-l-green-500 flex flex-col justify-center">
-                        <div class="flex justify-between items-center w-full"><span class="text-[9px] sm:text-[10px] text-green-600 font-semibold uppercase">💵 Kas Tunai</span><button onclick="koreksiSaldo('Tunai')" class="text-[9px] bg-gray-100 px-1 py-0.5 rounded border">✏️ Edit</button></div>
+                    <div class="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-l-4 border-l-green-500 flex flex-col justify-center relative group">
+                        <div class="flex justify-between items-center w-full"><span class="text-[9px] sm:text-[10px] text-green-600 font-semibold uppercase">💵 Kas Tunai</span><button onclick="koreksiSaldo('Tunai')" class="text-[9px] bg-gray-100 hover:bg-gray-200 px-1 py-0.5 rounded border transition cursor-pointer">✏️ Edit</button></div>
                         <span class="text-sm md:text-base font-bold text-green-700 mt-1 truncate" id="stat-tunai">Rp 0</span>
                     </div>
-                    <div class="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-l-4 border-l-indigo-500 flex flex-col justify-center">
-                        <div class="flex justify-between items-center w-full"><span class="text-[9px] sm:text-[10px] text-indigo-600 font-semibold uppercase">📱 Saldo QRIS</span><button onclick="koreksiSaldo('QRIS')" class="text-[9px] bg-gray-100 px-1 py-0.5 rounded border">✏️ Edit</button></div>
+                    <div class="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-l-4 border-l-indigo-500 flex flex-col justify-center relative group">
+                        <div class="flex justify-between items-center w-full"><span class="text-[9px] sm:text-[10px] text-indigo-600 font-semibold uppercase">📱 Saldo QRIS</span><button onclick="koreksiSaldo('QRIS')" class="text-[9px] bg-gray-100 hover:bg-gray-200 px-1 py-0.5 rounded border transition cursor-pointer">✏️ Edit</button></div>
                         <span class="text-sm md:text-base font-bold text-indigo-700 mt-1 truncate" id="stat-qris">Rp 0</span>
                     </div>
                     <div class="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-l-4 border-l-brand-main flex flex-col justify-center"><span class="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase">Omset Kotor</span><span class="text-sm md:text-base font-bold text-gray-800 truncate" id="stat-omset">Rp 0</span></div>
@@ -303,17 +305,25 @@
                     <div class="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-l-4 border-l-pink-500 flex flex-col justify-center"><span class="text-[9px] sm:text-[10px] text-pink-600 font-semibold uppercase">Piutang Kasbon</span><span class="text-sm md:text-base font-bold text-pink-700 truncate" id="stat-piutang">Rp 0</span></div>
                     <div class="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-l-4 border-l-gray-500 flex flex-col justify-center"><span class="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase">Total Trx</span><span class="text-sm md:text-base font-bold text-gray-800 truncate" id="stat-trx">0</span></div>
                     
-                    <button onclick="exportCSV()" class="bg-brand-soft rounded-xl shadow-sm border border-brand-light flex flex-col items-center justify-center p-2 hover:bg-brand-light transition">
+                    <button onclick="exportCSV()" class="bg-brand-soft rounded-xl shadow-sm border border-brand-light flex flex-col items-center justify-center p-2 hover:bg-brand-light transition cursor-pointer">
                         <span class="text-sm md:text-xl">💾</span><span class="text-[9px] sm:text-[10px] font-bold text-brand-dark mt-1 text-center">Ekspor<br>Excel</span>
                     </button>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden w-full flex flex-col h-[50vh] sm:h-auto">
+                <!-- TABEL BUKU KAS -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden w-full flex flex-col">
                     <div class="p-3 bg-brand-soft border-b border-brand-light font-bold text-brand-dark text-xs sm:text-sm flex-shrink-0">Riwayat Buku Kas & Penjualan</div>
-                    <div class="overflow-x-auto w-full flex-1">
+                    <div class="overflow-x-auto w-full" style="max-height: 50vh;">
                         <table class="w-full text-[10px] sm:text-xs text-left relative">
-                            <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm z-10">
-                                <tr><th class="p-2 sm:p-3 whitespace-nowrap">Info</th><th class="p-2 text-center whitespace-nowrap">Status</th><th class="p-2 hidden sm:table-cell min-w-[120px]">Item</th><th class="p-2 text-right whitespace-nowrap">Uang(Rp)</th><th class="p-2 text-right whitespace-nowrap">Laba(Rp)</th><th class="p-2 text-center min-w-[80px]">Aksi</th></tr>
+                            <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm z-20">
+                                <tr>
+                                    <th class="p-2 sm:p-3 whitespace-nowrap">Info</th>
+                                    <th class="p-2 sm:p-3 text-center whitespace-nowrap">Status</th>
+                                    <th class="p-2 hidden sm:table-cell min-w-[120px]">Item</th>
+                                    <th class="p-2 sm:p-3 text-right whitespace-nowrap">Uang(Rp)</th>
+                                    <th class="p-2 sm:p-3 text-right whitespace-nowrap">Laba(Rp)</th>
+                                    <th class="p-2 sm:p-3 text-center min-w-[100px]">Aksi</th>
+                                </tr>
                             </thead>
                             <tbody id="table-laporan" class="divide-y divide-gray-100 bg-white"></tbody>
                         </table>
@@ -323,14 +333,14 @@
         </div>
 
         <!-- HALAMAN 4: ANALISIS -->
-        <div id="page-analisis" class="absolute inset-x-0 top-0 bottom-[calc(55px+env(safe-area-inset-bottom))] md:bottom-0 hidden-page overflow-y-auto p-3 sm:p-6 pb-6">
-            <div class="max-w-7xl mx-auto">
+        <div id="page-analisis" class="absolute inset-x-0 top-0 bottom-[calc(55px+env(safe-area-inset-bottom))] md:bottom-0 hidden-page overflow-y-auto p-3 sm:p-6">
+            <div class="max-w-7xl mx-auto pb-4">
                 <div class="bg-white rounded-xl shadow-md border border-gray-100 p-4 mb-4 sm:mb-6 text-center">
                     <h2 class="text-base sm:text-xl font-bold text-brand-dark mb-1">📈 Analisis Performa Bisnis</h2>
                     <p class="text-[10px] sm:text-xs text-gray-500">Berdasarkan <span class="font-bold text-brand-main bg-brand-soft px-2 py-0.5 rounded-full" id="ana-rentang-waktu">Semua Waktu</span>.</p>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 pb-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     <div class="bg-white p-3 sm:p-5 rounded-xl shadow-md border border-gray-100 lg:col-span-2">
                         <h3 class="font-bold text-brand-dark mb-2 border-b pb-2 text-xs sm:text-sm">📊 Tren Omset & Laba Harian</h3>
                         <div class="relative h-[200px] sm:h-[300px] w-full" id="container-trend"></div>
@@ -349,8 +359,8 @@
 
     </main>
 
-    <!-- NAVIGASI MOBILE (BOTTOM BAR ANTI-TERPOTONG PONI HP) -->
-    <nav class="md:hidden fixed inset-x-0 bottom-0 w-full bg-white border-t border-gray-200 z-[100] flex justify-around items-center px-1 pt-1 shadow-[0_-4px_10px_rgba(0,0,0,0.08)]" style="padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);">
+    <!-- NAVIGASI MOBILE BAWAH (ANTI-TUMPANG TINDIH & SUPPORT NOTCH) -->
+    <nav class="md:hidden fixed inset-x-0 bottom-0 w-full bg-white border-t border-gray-200 z-[100] flex justify-around items-center px-1 pt-2 shadow-[0_-4px_10px_rgba(0,0,0,0.1)]" style="padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);">
         <button onclick="switchTab('kasir')" id="tab-mob-kasir" class="mobile-tab-active flex flex-col items-center justify-center p-1 w-1/4 text-gray-500 transition-colors">
             <span class="icon text-[20px] mb-0.5 block">🛒</span><span class="text-[9px] font-bold">Kasir</span>
         </button>
@@ -365,30 +375,40 @@
         </button>
     </nav>
 
-    <!-- KODE JAVASCRIPT UTAMA -->
+    <!-- KODE JAVASCRIPT UTAMA (100% ANTI CRASH) -->
     <script>
-        // INIT & VARIABLES
         const generateID = (prefix) => prefix + '-' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random() * 1000);
-        const DB_NAME = 'SekawanKafe_DB'; 
-        const DB_VERSION = 9; // Force upgrade version
-        let db;
-        let cart = [];
-        let currentKategoriFilter = 'Semua';
-        let globalProdukMap = {};
-        let filterStartDate = '';
-        let filterEndDate = '';
+        const DB_NAME = 'SekawanKafe_DB'; const DB_VERSION = 11; // Upgrade V11
+        let db, cart = [], currentKategoriFilter = 'Semua', globalProdukMap = {};
+        let filterStartDate = '', filterEndDate = '';
         let chartTrend = null, chartPayment = null, chartTopMenu = null;
         
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz8CoK3FHKHfdY4sRi2RLFfubRaabTqWzYY2imvAe_du6yQ3ph6jthVGONMcmmz_vcF/exec";
 
+        // DATA DEFAULT KAFE
         const dumpBahan = [{ id: 'B-DUMP01', nama_bahan: 'Kopi Robusta', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1500 },{ id: 'B-DUMP02', nama_bahan: 'Kopi Kahyangan 1saset', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1020 },{ id: 'B-DUMP03', nama_bahan: 'Kopi Nescafe', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1210 },{ id: 'B-DUMP04', nama_bahan: 'Kopi Indocafe', stok_saat_ini: 100, satuan: 'Porsi', hpp: 3200 },{ id: 'B-DUMP05', nama_bahan: 'Nutrisari saset', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1500 },{ id: 'B-DUMP06', nama_bahan: 'Beng beng saset', stok_saat_ini: 100, satuan: 'Porsi', hpp: 3300 },{ id: 'B-DUMP07', nama_bahan: 'Milo saset', stok_saat_ini: 100, satuan: 'Porsi', hpp: 2200 },{ id: 'B-DUMP08', nama_bahan: 'Chocolatos coklat Saset', stok_saat_ini: 100, satuan: 'Porsi', hpp: 2500 },{ id: 'B-DUMP09', nama_bahan: 'Chocolatos Matcha saset', stok_saat_ini: 100, satuan: 'Porsi', hpp: 2500 },{ id: 'B-DUMP10', nama_bahan: 'Extrajoss', stok_saat_ini: 100, satuan: 'Porsi', hpp: 0 },{ id: 'B-DUMP11', nama_bahan: 'Teh', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1000 },{ id: 'B-DUMP12', nama_bahan: 'Indomie G/k', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1250 },{ id: 'B-DUMP13', nama_bahan: 'Kentang 100g', stok_saat_ini: 100, satuan: 'Porsi', hpp: 0 },{ id: 'B-DUMP14', nama_bahan: 'Nugget', stok_saat_ini: 100, satuan: 'Porsi', hpp: 0 },{ id: 'B-DUMP15', nama_bahan: 'Air', stok_saat_ini: 100, satuan: 'Porsi', hpp: 100 },{ id: 'B-DUMP16', nama_bahan: 'gas', stok_saat_ini: 100, satuan: 'Porsi', hpp: 600 },{ id: 'B-DUMP17', nama_bahan: 'Cup', stok_saat_ini: 100, satuan: 'Porsi', hpp: 200 },{ id: 'B-DUMP18', nama_bahan: 'SKM', stok_saat_ini: 100, satuan: 'Porsi', hpp: 600 },{ id: 'B-DUMP19', nama_bahan: 'Jahe', stok_saat_ini: 100, satuan: 'Porsi', hpp: 500 },{ id: 'B-DUMP20', nama_bahan: 'Es batu', stok_saat_ini: 100, satuan: 'Porsi', hpp: 500 },{ id: 'B-DUMP21', nama_bahan: 'sedotan', stok_saat_ini: 100, satuan: 'Porsi', hpp: 100 },{ id: 'B-DUMP22', nama_bahan: 'cup', stok_saat_ini: 100, satuan: 'Porsi', hpp: 200 },{ id: 'B-DUMP23', nama_bahan: 'gula', stok_saat_ini: 100, satuan: 'Porsi', hpp: 500 },{ id: 'B-DUMP24', nama_bahan: 'Sirup Lemon', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1700 },{ id: 'B-DUMP25', nama_bahan: 'Sirup Peach', stok_saat_ini: 100, satuan: 'Porsi', hpp: 1700 },{ id: 'B-DUMP26', nama_bahan: 'uht', stok_saat_ini: 100, satuan: 'Porsi', hpp: 700 }];
         const dumpProduk = [{ id: 'P-DUMP01', nama_produk: 'Robusta', harga_jual: 8000, kategori: 'Minuman' },{ id: 'P-DUMP02', nama_produk: 'Robusta + susu', harga_jual: 8000, kategori: 'Minuman' },{ id: 'P-DUMP03', nama_produk: 'Kopi kahyangan', harga_jual: 7000, kategori: 'Minuman' },{ id: 'P-DUMP04', nama_produk: 'Kopi kahyangan + susu', harga_jual: 8000, kategori: 'Minuman' },{ id: 'P-DUMP05', nama_produk: 'Kopi Jahe', harga_jual: 8000, kategori: 'Minuman' },{ id: 'P-DUMP06', nama_produk: 'Americano', harga_jual: 8000, kategori: 'Minuman' },{ id: 'P-DUMP07', nama_produk: 'Es Capucinno', harga_jual: 11000, kategori: 'Minuman' },{ id: 'P-DUMP08', nama_produk: 'Nutrisari Orange', harga_jual: 8000, kategori: 'Minuman' },{ id: 'P-DUMP09', nama_produk: 'Nutrisari Milky Orange', harga_jual: 8000, kategori: 'Minuman' },{ id: 'P-DUMP10', nama_produk: 'Beng Beng', harga_jual: 10000, kategori: 'Minuman' },{ id: 'P-DUMP11', nama_produk: 'Milo', harga_jual: 9000, kategori: 'Minuman' },{ id: 'P-DUMP12', nama_produk: 'Chocolatos coklat', harga_jual: 9000, kategori: 'Minuman' },{ id: 'P-DUMP13', nama_produk: 'Chocolatos matcha', harga_jual: 9000, kategori: 'Minuman' },{ id: 'P-DUMP14', nama_produk: 'Josua', harga_jual: 10000, kategori: 'Minuman' },{ id: 'P-DUMP15', nama_produk: 'Teh Panas / dingin', harga_jual: 8000, kategori: 'Minuman' },{ id: 'P-DUMP16', nama_produk: 'Milk Tea', harga_jual: 9000, kategori: 'Minuman' },{ id: 'P-DUMP17', nama_produk: 'Lemon tea', harga_jual: 10000, kategori: 'Minuman' },{ id: 'P-DUMP18', nama_produk: 'Peach tea', harga_jual: 10000, kategori: 'Minuman' },{ id: 'P-DUMP19', nama_produk: 'Indomie', harga_jual: 7000, kategori: 'Makanan' },{ id: 'P-DUMP20', nama_produk: 'Indomie telur', harga_jual: 7000, kategori: 'Makanan' },{ id: 'P-DUMP21', nama_produk: 'Kentang goreng', harga_jual: 10000, kategori: 'Makanan' },{ id: 'P-DUMP22', nama_produk: 'Nugget', harga_jual: 10000, kategori: 'Makanan' }];
         const dumpResep = [{ id: 1, id_produk: 'P-DUMP01', id_bahan_baku: 'B-DUMP01', jumlah_dibutuhkan: 1 },{ id: 2, id_produk: 'P-DUMP01', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 3, id_produk: 'P-DUMP01', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 4, id_produk: 'P-DUMP02', id_bahan_baku: 'B-DUMP01', jumlah_dibutuhkan: 1 },{ id: 5, id_produk: 'P-DUMP02', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 6, id_produk: 'P-DUMP02', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 7, id_produk: 'P-DUMP02', id_bahan_baku: 'B-DUMP18', jumlah_dibutuhkan: 1 },{ id: 8, id_produk: 'P-DUMP03', id_bahan_baku: 'B-DUMP02', jumlah_dibutuhkan: 1 },{ id: 9, id_produk: 'P-DUMP03', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 10, id_produk: 'P-DUMP03', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 11, id_produk: 'P-DUMP04', id_bahan_baku: 'B-DUMP02', jumlah_dibutuhkan: 1 },{ id: 12, id_produk: 'P-DUMP04', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 13, id_produk: 'P-DUMP04', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 14, id_produk: 'P-DUMP04', id_bahan_baku: 'B-DUMP18', jumlah_dibutuhkan: 1 },{ id: 15, id_produk: 'P-DUMP05', id_bahan_baku: 'B-DUMP02', jumlah_dibutuhkan: 1 },{ id: 16, id_produk: 'P-DUMP05', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 17, id_produk: 'P-DUMP05', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 18, id_produk: 'P-DUMP05', id_bahan_baku: 'B-DUMP19', jumlah_dibutuhkan: 1 },{ id: 19, id_produk: 'P-DUMP06', id_bahan_baku: 'B-DUMP03', jumlah_dibutuhkan: 1 },{ id: 20, id_produk: 'P-DUMP06', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 21, id_produk: 'P-DUMP06', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 22, id_produk: 'P-DUMP06', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 23, id_produk: 'P-DUMP06', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 24, id_produk: 'P-DUMP06', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 25, id_produk: 'P-DUMP07', id_bahan_baku: 'B-DUMP04', jumlah_dibutuhkan: 1 },{ id: 26, id_produk: 'P-DUMP07', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 27, id_produk: 'P-DUMP07', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 28, id_produk: 'P-DUMP07', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 29, id_produk: 'P-DUMP07', id_bahan_baku: 'B-DUMP22', jumlah_dibutuhkan: 1 },{ id: 30, id_produk: 'P-DUMP07', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 31, id_produk: 'P-DUMP07', id_bahan_baku: 'B-DUMP26', jumlah_dibutuhkan: 1 },{ id: 32, id_produk: 'P-DUMP08', id_bahan_baku: 'B-DUMP05', jumlah_dibutuhkan: 1 },{ id: 33, id_produk: 'P-DUMP08', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 34, id_produk: 'P-DUMP08', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 35, id_produk: 'P-DUMP08', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 36, id_produk: 'P-DUMP08', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 37, id_produk: 'P-DUMP09', id_bahan_baku: 'B-DUMP05', jumlah_dibutuhkan: 1 },{ id: 38, id_produk: 'P-DUMP09', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 39, id_produk: 'P-DUMP09', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 40, id_produk: 'P-DUMP09', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 41, id_produk: 'P-DUMP09', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 42, id_produk: 'P-DUMP10', id_bahan_baku: 'B-DUMP06', jumlah_dibutuhkan: 1 },{ id: 43, id_produk: 'P-DUMP10', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 44, id_produk: 'P-DUMP10', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 45, id_produk: 'P-DUMP10', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 46, id_produk: 'P-DUMP10', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 47, id_produk: 'P-DUMP10', id_bahan_baku: 'B-DUMP23', jumlah_dibutuhkan: 1 },{ id: 48, id_produk: 'P-DUMP11', id_bahan_baku: 'B-DUMP07', jumlah_dibutuhkan: 1 },{ id: 49, id_produk: 'P-DUMP11', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 50, id_produk: 'P-DUMP11', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 51, id_produk: 'P-DUMP11', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 52, id_produk: 'P-DUMP11', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 53, id_produk: 'P-DUMP12', id_bahan_baku: 'B-DUMP08', jumlah_dibutuhkan: 1 },{ id: 54, id_produk: 'P-DUMP12', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 55, id_produk: 'P-DUMP12', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 56, id_produk: 'P-DUMP12', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 57, id_produk: 'P-DUMP12', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 58, id_produk: 'P-DUMP13', id_bahan_baku: 'B-DUMP09', jumlah_dibutuhkan: 1 },{ id: 59, id_produk: 'P-DUMP13', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 60, id_produk: 'P-DUMP13', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 61, id_produk: 'P-DUMP13', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 62, id_produk: 'P-DUMP13', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 63, id_produk: 'P-DUMP14', id_bahan_baku: 'B-DUMP10', jumlah_dibutuhkan: 1 },{ id: 64, id_produk: 'P-DUMP15', id_bahan_baku: 'B-DUMP11', jumlah_dibutuhkan: 1 },{ id: 65, id_produk: 'P-DUMP15', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 66, id_produk: 'P-DUMP15', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 67, id_produk: 'P-DUMP15', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 68, id_produk: 'P-DUMP15', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 69, id_produk: 'P-DUMP16', id_bahan_baku: 'B-DUMP11', jumlah_dibutuhkan: 1 },{ id: 70, id_produk: 'P-DUMP16', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 71, id_produk: 'P-DUMP16', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 72, id_produk: 'P-DUMP16', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 73, id_produk: 'P-DUMP16', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 74, id_produk: 'P-DUMP16', id_bahan_baku: 'B-DUMP18', jumlah_dibutuhkan: 1 },{ id: 75, id_produk: 'P-DUMP16', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 76, id_produk: 'P-DUMP17', id_bahan_baku: 'B-DUMP11', jumlah_dibutuhkan: 1 },{ id: 77, id_produk: 'P-DUMP17', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 78, id_produk: 'P-DUMP17', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 79, id_produk: 'P-DUMP17', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 80, id_produk: 'P-DUMP17', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 81, id_produk: 'P-DUMP17', id_bahan_baku: 'B-DUMP24', jumlah_dibutuhkan: 1 },{ id: 82, id_produk: 'P-DUMP17', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 83, id_produk: 'P-DUMP18', id_bahan_baku: 'B-DUMP11', jumlah_dibutuhkan: 1 },{ id: 84, id_produk: 'P-DUMP18', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 85, id_produk: 'P-DUMP18', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 86, id_produk: 'P-DUMP18', id_bahan_baku: 'B-DUMP17', jumlah_dibutuhkan: 1 },{ id: 87, id_produk: 'P-DUMP18', id_bahan_baku: 'B-DUMP20', jumlah_dibutuhkan: 1 },{ id: 88, id_produk: 'P-DUMP18', id_bahan_baku: 'B-DUMP25', jumlah_dibutuhkan: 1 },{ id: 89, id_produk: 'P-DUMP18', id_bahan_baku: 'B-DUMP21', jumlah_dibutuhkan: 1 },{ id: 90, id_produk: 'P-DUMP19', id_bahan_baku: 'B-DUMP12', jumlah_dibutuhkan: 1 },{ id: 91, id_produk: 'P-DUMP19', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 92, id_produk: 'P-DUMP19', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 93, id_produk: 'P-DUMP20', id_bahan_baku: 'B-DUMP12', jumlah_dibutuhkan: 1 },{ id: 94, id_produk: 'P-DUMP20', id_bahan_baku: 'B-DUMP15', jumlah_dibutuhkan: 1 },{ id: 95, id_produk: 'P-DUMP20', id_bahan_baku: 'B-DUMP16', jumlah_dibutuhkan: 1 },{ id: 96, id_produk: 'P-DUMP21', id_bahan_baku: 'B-DUMP13', jumlah_dibutuhkan: 1 },{ id: 97, id_produk: 'P-DUMP22', id_bahan_baku: 'B-DUMP14', jumlah_dibutuhkan: 1 }];
 
-        // Initialize Database safely
-        let req;
+        // HELPER SANITASI DATA (ANTI CRASH)
+        function parseDetailItem(raw, defaultHarga) {
+            if (Array.isArray(raw)) return raw;
+            if (typeof raw === 'string') {
+                try { 
+                    const parsed = JSON.parse(raw);
+                    if(Array.isArray(parsed)) return parsed;
+                } catch(e) {}
+            }
+            return [{ qty: 1, nama: String(raw || 'Item Kasir'), harga: parseFloat(defaultHarga)||0 }];
+        }
+
+        function formatRp(n) { 
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(parseFloat(n) || 0); 
+        }
+
+        // INISIALISASI DB AMAN
         try {
-            req = window.indexedDB.open(DB_NAME, DB_VERSION);
+            const req = window.indexedDB.open(DB_NAME, DB_VERSION);
             req.onupgradeneeded = (e) => {
                 db = e.target.result;
                 if (!db.objectStoreNames.contains('bahan_baku')) db.createObjectStore('bahan_baku', { keyPath: 'id' });
@@ -397,8 +417,8 @@
                 if (!db.objectStoreNames.contains('penjualan')) db.createObjectStore('penjualan', { keyPath: 'id' });
             };
             req.onsuccess = (e) => { db = e.target.result; checkAndSeedData(); };
-            req.onerror = () => { alert("Gagal memuat Database. Pastikan browser tidak mode Private."); };
-        } catch (error) { console.error(error); }
+            req.onerror = () => { alert("Peringatan: Gagal memuat Memori Lokal. Pastikan tidak dalam Mode Incognito super ketat."); };
+        } catch (error) { console.error("IndexDB Err:", error); }
         
         function getDBData(s) { 
             return new Promise((resolve) => { 
@@ -427,15 +447,15 @@
             } catch(e) { console.error("Skip seed", e); }
         }
 
-        function formatRp(n) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(parseFloat(n) || 0); }
-
         function resetDatabaseToDump() {
             if(!confirm('🚨 Semua data lama akan dihapus dan diganti Default Kafe. Lanjutkan?')) return;
             const tx = db.transaction(['bahan_baku', 'produk', 'resep', 'penjualan'], 'readwrite');
             ['bahan_baku', 'produk', 'resep', 'penjualan'].forEach(s => tx.objectStore(s).clear());
             tx.oncomplete = () => {
                 const t2 = db.transaction(['bahan_baku', 'produk', 'resep'], 'readwrite');
-                dumpBahan.forEach(b => t2.objectStore('bahan_baku').put(b)); dumpProduk.forEach(p => t2.objectStore('produk').put(p)); dumpResep.forEach(r => t2.objectStore('resep').put(r));
+                dumpBahan.forEach(b => t2.objectStore('bahan_baku').put(b)); 
+                dumpProduk.forEach(p => t2.objectStore('produk').put(p)); 
+                dumpResep.forEach(r => t2.objectStore('resep').put(r));
                 t2.oncomplete = () => { alert("Reset berhasil!"); refreshAllData(); };
             };
         }
@@ -459,7 +479,8 @@
 
         async function refreshAllData() {
             try {
-                const allP = await getDBData('produk'); globalProdukMap = allP.reduce((acc, p) => ({...acc, [p.id]: p}), {});
+                const allP = await getDBData('produk');
+                globalProdukMap = allP.reduce((acc, p) => ({...acc, [p.id]: p}), {});
                 await renderProdukKasir(); await renderTabelBahan(); await renderTabelProduk(); await populateDropdowns(); await renderLaporan();
             } catch(e) {}
         }
@@ -470,9 +491,9 @@
         // --- MANUAL JURNAL ---
         function toggleManualUI(sel) {
             const v = sel.value, mw = document.getElementById('manual-metode-wrapper'), mutw = document.getElementById('manual-mutasi-wrapper'), btn = document.getElementById('btn-manual-submit');
-            if (v === 'Mutasi') { mw.classList.add('hidden'); mutw.classList.remove('hidden'); mutw.classList.add('flex'); btn.className = "w-full sm:w-auto bg-indigo-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition"; } 
-            else if (v === 'NonKas') { mw.classList.add('hidden'); mutw.classList.remove('flex'); mutw.classList.add('hidden'); btn.className = "w-full sm:w-auto bg-purple-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition"; } 
-            else { mw.classList.remove('hidden'); mutw.classList.remove('flex'); mutw.classList.add('hidden'); if(v === 'Pengeluaran') btn.className = "w-full sm:w-auto bg-red-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition"; else btn.className = "w-full sm:w-auto bg-green-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition"; }
+            if (v === 'Mutasi') { mw.classList.add('hidden'); mutw.classList.remove('hidden'); mutw.classList.add('flex'); btn.className = "w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; } 
+            else if (v === 'NonKas') { mw.classList.add('hidden'); mutw.classList.remove('flex'); mutw.classList.add('hidden'); btn.className = "w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; } 
+            else { mw.classList.remove('hidden'); mutw.classList.remove('flex'); mutw.classList.add('hidden'); if(v === 'Pengeluaran') btn.className = "w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; else btn.className = "w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; }
         }
 
         async function addTransaksiManual() {
@@ -570,9 +591,9 @@
                     <div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl border border-gray-200">
                         <div class="flex-1 pr-2"><div class="text-[10px] sm:text-xs font-bold text-brand-dark line-clamp-1">${i.nama}</div><div class="text-[9px] sm:text-[10px] text-gray-500">${formatRp(i.harga)}</div></div>
                         <div class="flex items-center gap-1 bg-white border border-gray-100 px-1 py-1 rounded shadow-sm">
-                            <button onclick="updateCartQty('${i.id}', -1)" class="text-red-500 font-bold px-1.5 hover:bg-red-50 rounded">-</button>
+                            <button onclick="updateCartQty('${i.id}', -1)" class="text-red-500 font-bold px-1.5 hover:bg-red-50 rounded cursor-pointer">-</button>
                             <span class="text-[10px] sm:text-xs font-bold w-4 text-center">${i.qty}</span>
-                            <button onclick="updateCartQty('${i.id}', 1)" class="text-green-500 font-bold px-1.5 hover:bg-green-50 rounded">+</button>
+                            <button onclick="updateCartQty('${i.id}', 1)" class="text-green-500 font-bold px-1.5 hover:bg-green-50 rounded cursor-pointer">+</button>
                         </div>
                     </div>`}).join('');
                 totEl.innerText = formatRp(total); totEl.dataset.value = total;
@@ -599,9 +620,12 @@
                 const server = await device.gatt.connect(); const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb'); const char = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
                 const ESC = "\x1B", GS = "\x1D", CENTER = ESC + "a" + "\x01", LEFT = ESC + "a" + "\x00", BOLD_ON = ESC + "E" + "\x01", BOLD_OFF = ESC + "E" + "\x00", DOUBLE_HEIGHT = GS + "!" + "\x01", NORMAL_SIZE = GS + "!" + "\x00", LINE = "--------------------------------\n"; 
                 let rec = CENTER + BOLD_ON + DOUBLE_HEIGHT + "SEKAWAN KAFE\n" + NORMAL_SIZE + BOLD_OFF + CENTER + "Perumahan sumbersari permai 2,\nkramat 2, blok AA.08\n" + CENTER + LINE + LEFT + "ID : " + trxData.id.split('-')[1] + "\nTgl: " + trxData.tanggal_waktu + "\nPlg: " + (trxData.nama_pelanggan || 'Umum') + "\nTipe: " + trxData.status_pembayaran + " (" + trxData.metode_pembayaran.split(' ')[0] + ")\n" + LINE;
-                trxData.detail_item.forEach(i => { let iN = i.nama.substring(0, 20); rec += iN + "\n"; let qS = i.qty + "x " + formatRp(i.harga).replace('Rp', '').trim(); let sT = formatRp(i.harga * i.qty).replace('Rp', '').trim(); let sp = 32 - (qS.length + sT.length); rec += qS + " ".repeat(sp > 0 ? sp : 1) + sT + "\n"; });
+                
+                const items = parseDetailItem(trxData.detail_item, trxData.total_bayar);
+                items.forEach(i => { let iN = String(i.nama).substring(0, 20); rec += iN + "\n"; let qS = i.qty + "x " + formatRp(i.harga).replace('Rp', '').trim(); let sT = formatRp(i.harga * i.qty).replace('Rp', '').trim(); let sp = 32 - (qS.length + sT.length); rec += qS + " ".repeat(sp > 0 ? sp : 1) + sT + "\n"; });
+                
                 rec += LINE + BOLD_ON; 
-                let oriTot = formatRp(trxData.detail_item.reduce((s,x)=>s+(parseFloat(x.harga)*parseFloat(x.qty)),0)).replace('Rp', '').trim();
+                let oriTot = formatRp(items.reduce((s,x)=>s+(parseFloat(x.harga)*parseFloat(x.qty)),0)).replace('Rp', '').trim();
                 rec += "TOTAL" + " ".repeat(32 - (5 + oriTot.length)) + oriTot + "\n" + BOLD_OFF;
                 
                 if (trxData.status_pembayaran === 'Konsumsi') { rec += CENTER + "KONSUMSI PEGAWAI (GRATIS)\n"; }
@@ -628,8 +652,10 @@
             document.getElementById('r-id').innerText = trxData.id.split('-')[1] || trxData.id;
             document.getElementById('r-tgl').innerText = trxData.tanggal_waktu; document.getElementById('r-plg').innerText = trxData.nama_pelanggan || 'Umum'; document.getElementById('r-tipe').innerText = `${trxData.status_pembayaran} (${trxData.metode_pembayaran.split(' ')[0]})`;
             const tBody = document.getElementById('r-items'); tBody.innerHTML = '';
-            trxData.detail_item.forEach(i => { tBody.innerHTML += `<tr><td colspan="2" class="pb-1">${i.nama}</td></tr><tr><td class="pb-2 text-gray-600">${i.qty}x ${formatRp(i.harga).replace('Rp','').trim()}</td><td class="pb-2 text-right font-semibold">${formatRp(i.harga * i.qty).replace('Rp','').trim()}</td></tr>`; });
-            document.getElementById('r-total').innerText = formatRp(trxData.detail_item.reduce((s,x)=>s+(parseFloat(x.harga)*parseFloat(x.qty)),0));
+            
+            const items = parseDetailItem(trxData.detail_item, trxData.total_bayar);
+            items.forEach(i => { tBody.innerHTML += `<tr><td colspan="2" class="pb-1">${i.nama}</td></tr><tr><td class="pb-2 text-gray-600">${i.qty}x ${formatRp(i.harga).replace('Rp','').trim()}</td><td class="pb-2 text-right font-semibold">${formatRp(i.harga * i.qty).replace('Rp','').trim()}</td></tr>`; });
+            document.getElementById('r-total').innerText = formatRp(items.reduce((s,x)=>s+(parseFloat(x.harga)*parseFloat(x.qty)),0));
             
             const pi = document.getElementById('r-payment-info');
             if (trxData.status_pembayaran === 'Konsumsi') pi.innerHTML = `<div class="text-center italic text-purple-600 mt-2">KONSUMSI PEGAWAI (GRATIS)</div>`;
@@ -675,19 +701,19 @@
             try {
                 const aR = await getDBData('resep'), aB = await getDBData('bahan_baku'), bMap = aB.reduce((acc, b) => ({...acc, [b.id]: b}), {});
                 let kBt = {}, tHpp = 0;
-                cart.forEach(i => { aR.filter(r => r.id_produk === i.id).forEach(r => { if (!kBt[r.id_bahan_baku]) kBt[r.id_bahan_baku] = 0; kBt[r.id_bahan_baku] += (r.jumlah_dibutuhkan * i.qty); }); });
-                for (const [id_b, qt] of Object.entries(kBt)) { const b = bMap[id_b]; if (!b || b.stok_saat_ini < qt) return alert(`Stok Habis: ${b ? b.nama_bahan : '?'}`); tHpp += (b.hpp || 0) * qt; }
+                cart.forEach(i => { aR.filter(r => r.id_produk === i.id).forEach(r => { if (!kBt[r.id_bahan_baku]) kBt[r.id_bahan_baku] = 0; kBt[r.id_bahan_baku] += (parseFloat(r.jumlah_dibutuhkan) * i.qty); }); });
+                for (const [id_b, qt] of Object.entries(kBt)) { const b = bMap[id_b]; if (!b || parseFloat(b.stok_saat_ini) < qt) return alert(`Stok Habis: ${b ? b.nama_bahan : '?'}`); tHpp += (parseFloat(b.hpp) || 0) * qt; }
                 
                 let actTotal = (status_pembayaran === 'Konsumsi') ? 0 : totalBayar; const labaBersih = actTotal - tHpp;
                 const txW = db.transaction(['bahan_baku', 'penjualan'], 'readwrite'); const sB = txW.objectStore('bahan_baku');
-                for (const [id_b, qt] of Object.entries(kBt)) { const b = bMap[id_b]; b.stok_saat_ini = parseFloat((b.stok_saat_ini - qt).toFixed(2)); sB.put(b); }
+                for (const [id_b, qt] of Object.entries(kBt)) { const b = bMap[id_b]; b.stok_saat_ini = parseFloat((parseFloat(b.stok_saat_ini) - qt).toFixed(2)); sB.put(b); }
                 const tgl = new Date().toISOString().slice(0, 16).replace('T', ' ');
                 const dP = { id: generateID('TRX'), tanggal_waktu: tgl, nama_pelanggan: namaPelanggan || 'Umum', status_pembayaran: status_pembayaran, total_bayar: actTotal, total_hpp: tHpp, laba: labaBersih, metode_pembayaran: methodStr, detail_item: JSON.parse(JSON.stringify(cart)) };
                 txW.objectStore('penjualan').add(dP);
                 txW.oncomplete = async () => {
                     if (aType === 'bluetooth') { if (await printReceipt(dP, csh, kembalian)) alert("✅ Struk Dicetak!"); else alert("✅ Disimpan, Gagal Cetak."); } 
                     else if (aType === 'pdf') { await generatePDF(dP, csh, kembalian); alert("✅ PDF Diunduh!"); } 
-                    else alert("✅ Transaksi Berhasil!");
+                    else alert(status_pembayaran === 'Hutang' ? "📝 Kasbon dicatat!" : status_pembayaran === 'Konsumsi' ? "🍽️ Konsumsi dicatat!" : "✅ Lunas Berhasil!");
                     clearCart(); refreshAllData();
                 };
             } catch (e) { alert("Error sistem checkout."); }
@@ -706,7 +732,7 @@
         }
         function editBahan(id) {
             const tx = db.transaction('bahan_baku', 'readwrite'), store = tx.objectStore('bahan_baku');
-            store.get(id).onsuccess = e => { const b = e.target.result; if (!b) return; const nN = prompt("Nama Bahan:", b.nama_bahan); if (nN) { b.nama_bahan = nN.trim(); store.put(b); } }; tx.oncomplete = () => refreshAllData();
+            store.get(id).onsuccess = e => { const b = e.target.result; if (!b) return; const nN = prompt("Nama Bahan Baku:", b.nama_bahan); if (nN) { b.nama_bahan = nN.trim(); store.put(b); } }; tx.oncomplete = () => refreshAllData();
         }
         function addProduk(e) {
             e.preventDefault(); const n = document.getElementById('produk-nama').value.trim(), h = parseFloat(document.getElementById('produk-harga').value), k = document.getElementById('produk-kategori').value;
@@ -728,28 +754,28 @@
         async function deleteBahan(id) { if(!confirm('Hapus bahan?')) return; const r = await getDBData('resep'), tx = db.transaction(['bahan_baku', 'resep'], 'readwrite'); tx.objectStore('bahan_baku').delete(id); r.filter(x=>x.id_bahan_baku===id).forEach(x=>tx.objectStore('resep').delete(x.id)); tx.oncomplete=()=>refreshAllData(); }
         async function deleteProduk(id) { if(!confirm('Hapus menu?')) return; const r = await getDBData('resep'), tx = db.transaction(['produk', 'resep'], 'readwrite'); tx.objectStore('produk').delete(id); r.filter(x=>x.id_produk===id).forEach(x=>tx.objectStore('resep').delete(x.id)); tx.oncomplete=()=>refreshAllData(); }
         function deleteResepItem(id) { if(!confirm('Hapus dari resep?')) return; db.transaction(['resep'], 'readwrite').objectStore('resep').delete(id).onsuccess=()=>refreshAllData(); }
-        function updateStok(id) { const t=prompt("STOK (+/-):"); if(t&&!isNaN(t)){ const tx=db.transaction('bahan_baku', 'readwrite'), st=tx.objectStore('bahan_baku'); st.get(id).onsuccess=e=>{const b=e.target.result; if(b){b.stok_saat_ini=Math.max(0, b.stok_saat_ini+parseFloat(t)); st.put(b);}}; tx.oncomplete=()=>refreshAllData(); } }
+        function updateStok(id) { const t=prompt("STOK (+/-):"); if(t&&!isNaN(t)){ const tx=db.transaction('bahan_baku', 'readwrite'), st=tx.objectStore('bahan_baku'); st.get(id).onsuccess=e=>{const b=e.target.result; if(b){b.stok_saat_ini=Math.max(0, parseFloat((parseFloat(b.stok_saat_ini)+parseFloat(t)).toFixed(2))); st.put(b);}}; tx.oncomplete=()=>refreshAllData(); } }
         function updateHPP(id) { const h=prompt("HPP Baru (Rp):"); if(h&&!isNaN(h)&&h>=0){ const tx=db.transaction('bahan_baku', 'readwrite'), st=tx.objectStore('bahan_baku'); st.get(id).onsuccess=e=>{const b=e.target.result; if(b){b.hpp=parseFloat(h); st.put(b);}}; tx.oncomplete=()=>refreshAllData(); } }
 
         async function renderTabelBahan() {
             try {
                 const bD = await getDBData('bahan_baku');
-                document.getElementById('table-bahan').innerHTML = bD.map(b => `<tr class="hover:bg-brand-soft border-b border-gray-100 text-xs sm:text-sm"><td class="p-2 sm:p-3"><div class="font-bold text-gray-800">${b.nama_bahan}</div><div class="text-[9px] text-gray-400">ID: ${String(b.id).split('-')[1]||b.id}</div></td><td class="p-2 sm:p-3 text-gray-600">${formatRp(b.hpp||0)}/${b.satuan}</td><td class="p-2 sm:p-3"><span class="font-bold text-brand-main">${b.stok_saat_ini}</span> <span class="text-gray-500">${b.satuan}</span></td><td class="p-2 sm:p-3"><div class="flex gap-1 mb-1"><button onclick="updateStok('${b.id}')" class="bg-brand-soft text-brand-main hover:bg-brand-light px-2 py-1 rounded shadow-sm flex-1 font-semibold">+ Stok</button><button onclick="updateHPP('${b.id}')" class="bg-white border text-gray-600 px-2 py-1 rounded shadow-sm flex-1">💰 HPP</button></div><div class="flex gap-1"><button onclick="editBahan('${b.id}')" class="bg-yellow-50 text-yellow-600 px-2 py-1 rounded shadow-sm flex-1">✏️ Edit</button><button onclick="deleteBahan('${b.id}')" class="bg-red-50 text-red-600 px-2 py-1 rounded shadow-sm flex-1">🗑️ Hps</button></div></td></tr>`).join('');
+                document.getElementById('table-bahan').innerHTML = bD.map(b => `<tr class="hover:bg-brand-soft border-b border-gray-100 text-xs sm:text-sm"><td class="p-2 sm:p-3"><div class="font-bold text-gray-800">${b.nama_bahan}</div><div class="text-[9px] text-gray-400">ID: ${String(b.id).split('-')[1]||b.id}</div></td><td class="p-2 sm:p-3 text-gray-600">${formatRp(b.hpp||0)}/${b.satuan}</td><td class="p-2 sm:p-3"><span class="font-bold text-brand-main">${b.stok_saat_ini}</span> <span class="text-gray-500">${b.satuan}</span></td><td class="p-2 sm:p-3"><div class="flex gap-1 mb-1"><button onclick="updateStok('${b.id}')" class="bg-brand-soft text-brand-main hover:bg-brand-light px-2 py-1 rounded shadow-sm flex-1 font-semibold cursor-pointer">+ Stok</button><button onclick="updateHPP('${b.id}')" class="bg-white border text-gray-600 px-2 py-1 rounded shadow-sm flex-1 cursor-pointer">💰 HPP</button></div><div class="flex gap-1"><button onclick="editBahan('${b.id}')" class="bg-yellow-50 text-yellow-600 px-2 py-1 rounded shadow-sm flex-1 cursor-pointer">✏️ Edit</button><button onclick="deleteBahan('${b.id}')" class="bg-red-50 text-red-600 px-2 py-1 rounded shadow-sm flex-1 cursor-pointer">🗑️ Hps</button></div></td></tr>`).join('');
             } catch(e) {}
         }
         async function renderTabelProduk() {
             try {
                 const pD = await getDBData('produk'), rD = await getDBData('resep'), bD = await getDBData('bahan_baku'), bM = bD.reduce((a,b)=>({...a,[b.id]:b}),{});
                 document.getElementById('table-produk').innerHTML = pD.map(p => {
-                    let tH = 0; const rs = rD.filter(r=>r.id_produk===p.id).map(r=>{const b=bM[r.id_bahan_baku]; if(!b)return''; tH+=(parseFloat(b.hpp)||0)*parseFloat(r.jumlah_dibutuhkan); return `<span class="bg-white border text-[10px] px-1.5 py-0.5 rounded-md mr-1 mb-1 shadow-sm inline-flex">${b.nama_bahan}: ${r.jumlah_dibutuhkan} <button onclick="deleteResepItem('${r.id}')" class="ml-1 text-red-500 font-bold">&times;</button></span>`;}).join('');
+                    let tH = 0; const rs = rD.filter(r=>r.id_produk===p.id).map(r=>{const b=bM[r.id_bahan_baku]; if(!b)return''; tH+=(parseFloat(b.hpp)||0)*parseFloat(r.jumlah_dibutuhkan); return `<span class="bg-white border text-[10px] px-1.5 py-0.5 rounded-md mr-1 mb-1 shadow-sm inline-flex">${b.nama_bahan}: ${r.jumlah_dibutuhkan} <button onclick="deleteResepItem('${r.id}')" class="ml-1 text-red-500 font-bold cursor-pointer">&times;</button></span>`;}).join('');
                     return `<tr class="hover:bg-brand-soft border-b border-gray-100 text-xs sm:text-sm">
-                        <td class="p-2 sm:p-3">
+                        <td class="p-2 sm:p-3 align-top sm:align-middle">
                             <div class="font-bold text-gray-800">${p.nama_produk}</div><div class="text-[9px] text-gray-500">${p.kategori}</div>
-                            <div class="sm:hidden mt-1.5 pt-1.5 border-t border-gray-200 text-[10px] leading-tight whitespace-normal break-words">${rs||'<i class="text-gray-400">Belum ada resep</i>'}</div>
+                            <div class="sm:hidden mt-1.5 pt-1.5 border-t border-gray-200 text-[10px] leading-tight w-full break-words whitespace-normal">${rs||'<i class="text-gray-400">Belum ada resep</i>'}</div>
                         </td>
-                        <td class="p-2 sm:p-3 hidden sm:table-cell min-w-[150px] leading-tight">${rs||'-'}</td>
-                        <td class="p-2 sm:p-3"><div class="font-bold text-gray-700">Jual: ${formatRp(p.harga_jual)}</div><div class="text-[9px] sm:text-[10px] text-red-500">HPP: ${formatRp(tH)}</div><div class="text-[9px] sm:text-[10px] text-brand-main font-bold">Laba: ${formatRp((parseFloat(p.harga_jual)||0)-tH)}</div></td>
-                        <td class="p-2 sm:p-3"><div class="flex flex-col gap-1"><button onclick="editProduk('${p.id}')" class="bg-blue-50 text-blue-600 px-2 py-1 rounded shadow-sm">✏️ Edit</button><button onclick="deleteProduk('${p.id}')" class="bg-red-50 text-red-600 px-2 py-1 rounded shadow-sm">🗑️ Hapus</button></div></td>
+                        <td class="p-2 sm:p-3 hidden sm:table-cell min-w-[150px] leading-tight align-top sm:align-middle">${rs||'-'}</td>
+                        <td class="p-2 sm:p-3 align-top sm:align-middle"><div class="font-bold text-gray-700">Jual: ${formatRp(p.harga_jual)}</div><div class="text-[9px] sm:text-[10px] text-red-500">HPP: ${formatRp(tH)}</div><div class="text-[9px] sm:text-[10px] text-brand-main font-bold">Laba: ${formatRp((parseFloat(p.harga_jual)||0)-tH)}</div></td>
+                        <td class="p-2 sm:p-3 align-top sm:align-middle"><div class="flex flex-col gap-1"><button onclick="editProduk('${p.id}')" class="bg-blue-50 text-blue-600 px-2 py-1 rounded shadow-sm cursor-pointer">✏️ Edit</button><button onclick="deleteProduk('${p.id}')" class="bg-red-50 text-red-600 px-2 py-1 rounded shadow-sm cursor-pointer">🗑️ Hapus</button></div></td>
                     </tr>`;
                 }).join('');
             } catch(e) {}
@@ -790,24 +816,28 @@
                             if (tStat === 'Hutang') { tP+=tBayar; }
                             else if (tStat === 'Konsumsi') { tL+=tLaba; tE+=tHpp; }
                             else {
-                                let oriTot = Array.isArray(t.detail_item) ? t.detail_item.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||0)),0) : tBayar;
+                                let oriTot = 0;
+                                const items = parseDetailItem(t.detail_item, tBayar);
+                                oriTot = items.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||1)),0);
                                 tO+=oriTot; tL += tLaba || (oriTot - tHpp);
                                 if (tMetode.startsWith('Split')) { const mMatch = tMetode.match(/T:(\d+), Q:(\d+)/); if(mMatch) { kT+=parseFloat(mMatch[1]); kQ+=parseFloat(mMatch[2]); } } 
                                 else if (tMetode === 'QRIS') kQ+=oriTot; else kT+=oriTot;
                             }
                         }
-                    } catch(err) { console.error("Skip bad data loop:", err); }
+                    } catch(err) {}
                 });
                 
                 document.getElementById('stat-tunai').innerText=formatRp(kT); document.getElementById('stat-qris').innerText=formatRp(kQ); document.getElementById('stat-pengeluaran').innerText=formatRp(tE); document.getElementById('stat-omset').innerText=formatRp(tO); document.getElementById('stat-laba').innerText=formatRp(tL); document.getElementById('stat-piutang').innerText=formatRp(tP); document.getElementById('stat-trx').innerText=pD.filter(t=>{const id=t.id||''; return !id.startsWith('EXP-')&&!id.startsWith('INC-')&&!id.startsWith('NON-')&&!id.startsWith('MUT-')&&(t.status_pembayaran!=='Konsumsi');}).length;
 
                 document.getElementById('table-laporan').innerHTML = pD.map(t => {
                     try {
-                        const tid=t.id||'', tTgl=t.tanggal_waktu||'', tPel=t.nama_pelanggan||'Umum', tMetode=t.metode_pembayaran||'Tunai', tStat=t.status_pembayaran||'Lunas';
+                        const tid=String(t.id||''), tTgl=String(t.tanggal_waktu||''), tPel=String(t.nama_pelanggan||'Umum'), tMetode=String(t.metode_pembayaran||'Tunai'), tStat=String(t.status_pembayaran||'Lunas');
                         const tBayar=parseFloat(t.total_bayar)||0, tHpp=parseFloat(t.total_hpp)||0, tLaba=parseFloat(t.laba)||0;
                         const iE=tid.startsWith('EXP-'), iI=tid.startsWith('INC-'), iN=tid.startsWith('NON-'), iM=tid.startsWith('MUT-'), iH=tStat==='Hutang', iK=tStat==='Konsumsi';
                         
-                        let iStr = Array.isArray(t.detail_item) ? t.detail_item.map(i=>`${i.qty||0}x ${i.nama||'Item'}`).join(', ') : (t.detail_item||'');
+                        const items = parseDetailItem(t.detail_item, tBayar);
+                        let iStr = items.map(i=>`${i.qty||1}x ${i.nama||'Item'}`).join(', ');
+                        
                         let sB = '';
                         if(iM) sB = `<span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200 text-[10px]">MUTASI</span>`;
                         else if(iN) sB = `<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold border border-purple-200 text-[10px]">NON-KAS</span>`;
@@ -817,13 +847,13 @@
                         else if(iK) sB = `<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold border border-purple-200 text-[10px]">KONSUMSI</span>`;
                         else sB = `<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold border border-green-200 text-[10px]"><span class="hidden sm:inline">LUNAS </span>(${tMetode.split(' ')[0]})</span>`;
 
-                        let aBtn = `<button onclick="batalkanTransaksi('${tid}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1.5 rounded text-[10px] w-full shadow-sm mt-1 border border-red-100">❌ Batal</button>`;
+                        let aBtn = `<button onclick="batalkanTransaksi('${tid}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1.5 rounded text-[10px] w-full shadow-sm mt-1 border border-red-100 cursor-pointer">❌ Batal</button>`;
                         if(!iE && !iI && !iN && !iM) {
-                            const pG = `<div class="flex gap-1 w-full"><button onclick="reprintReceipt('${tid}', 'bluetooth')" class="bg-gray-100 px-1 py-1 rounded text-[10px] flex-1 shadow-sm border border-gray-200">🖨️ BT</button><button onclick="reprintReceipt('${tid}', 'pdf')" class="bg-orange-50 text-orange-600 px-1 py-1 rounded text-[10px] flex-1 shadow-sm border border-orange-200">📄 PDF</button></div>`;
-                            if(iH) aBtn = `<button onclick="lunasiTransaksi('${tid}')" class="bg-green-500 text-white px-2 py-1.5 rounded text-[10px] mb-1 w-full font-bold shadow-sm">💸 Lunasi</button>` + pG + aBtn; else aBtn = pG + aBtn;
+                            const pG = `<div class="flex gap-1 w-full"><button onclick="reprintReceipt('${tid}', 'bluetooth')" class="bg-gray-100 hover:bg-gray-200 px-1 py-1 rounded text-[10px] flex-1 shadow-sm border border-gray-200 cursor-pointer">🖨️ BT</button><button onclick="reprintReceipt('${tid}', 'pdf')" class="bg-orange-50 hover:bg-orange-100 text-orange-600 px-1 py-1 rounded text-[10px] flex-1 shadow-sm border border-orange-200 cursor-pointer">📄 PDF</button></div>`;
+                            if(iH) aBtn = `<button onclick="lunasiTransaksi('${tid}')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1.5 rounded text-[10px] mb-1 w-full font-bold shadow-sm cursor-pointer">💸 Lunasi</button>` + pG + aBtn; else aBtn = pG + aBtn;
                         }
                         
-                        let oriTot = Array.isArray(t.detail_item) ? t.detail_item.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||0)),0) : tBayar;
+                        let oriTot = items.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||1)),0);
                         let oT = '';
                         if(iM) { const p=tMetode.split('_'); oT = `<span class="text-indigo-600 text-[10px]">${p[0]||'?'} ➡️ ${p[1]||'?'}</span><br><span class="font-bold">${formatRp(tBayar)}</span>`; }
                         else if(iE || iN) oT = `<span class="text-red-500">- ${formatRp(tHpp)}</span>`;
@@ -838,7 +868,7 @@
                         else if(iK) lT = `<span class="text-purple-600 font-bold">${formatRp(tLaba)}</span>`;
                         else lT = `<span class="text-teal-600 font-bold">${formatRp(tLaba||(oriTot-tHpp))}</span>`;
                         
-                        // KHUSUS MOBILE: Menampilkan detail item di bawah Tgl/Pelanggan agar tidak perlu scroll ke samping!
+                        // Detail Menu ditampilkan di Mobile di kolom pertama
                         return `
                         <tr class="hover:bg-brand-soft border-b border-gray-100">
                             <td class="p-2 sm:p-3 align-top sm:align-middle">
@@ -876,11 +906,12 @@
                         if(tid.startsWith('EXP-') || tid.startsWith('NON-')) tM[d].l -= tHpp;
                         else if(tid.startsWith('INC-')) tM[d].l += tBayar;
                         else if(!tid.startsWith('MUT-')) {
-                            if(Array.isArray(t.detail_item)) t.detail_item.forEach(i=>{if(!mM[i.nama])mM[i.nama]=0; mM[i.nama]+=(parseFloat(i.qty)||0);});
+                            const items = parseDetailItem(t.detail_item, tBayar);
+                            items.forEach(i=>{if(!mM[i.nama])mM[i.nama]=0; mM[i.nama]+=(parseFloat(i.qty)||1);});
                             if(tStat==='Hutang') pM['Kasbon']++;
                             else if(tStat==='Konsumsi') { tM[d].l += tLaba; pM['Konsumsi']++; }
                             else { 
-                                let oriTot = Array.isArray(t.detail_item) ? t.detail_item.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||0)),0) : tBayar;
+                                let oriTot = items.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||1)),0);
                                 tM[d].o += oriTot; tM[d].l += tLaba||(oriTot-tHpp); 
                                 if(tMetode.startsWith('Split')) pM['Split']++; else if(tMetode==='QRIS') pM['QRIS']++; else pM['Tunai']++; 
                             }
@@ -904,24 +935,29 @@
 
         // --- CLOUD SYNC & EXPORT AMAN ---
         async function pushToGSheets(btn) {
-            const orgText = btn.innerHTML; 
+            const button = btn && btn.innerHTML ? btn : document.createElement('button');
+            const orgText = button.innerHTML; 
             try { 
                 const p = await getDBData('penjualan'), b = await getDBData('bahan_baku'), pr = await getDBData('produk'), r = await getDBData('resep'); 
                 if(p.length === 0 && pr.length === 0 && b.length === 0) return alert("Data kosong, tidak ada yang perlu dikirim."); 
-                btn.innerHTML = '⏳ Tunggu...'; btn.disabled = true; 
+                
+                button.innerHTML = '⏳ Tunggu...'; 
+                button.disabled = true; 
                 
                 const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({penjualan: p, bahan_baku: b, produk: pr, resep: r}) }); 
                 const rt = await res.json(); 
-                if(rt.status === "sukses") alert("☁️ Push data berhasil!"); else throw new Error(rt.error || "Gagal dari server"); 
+                if(rt.status === "sukses") alert("☁️ Push data berhasil!\n(Manual Jurnal / Pengeluaran juga masuk ke Sheet)"); 
+                else throw new Error(rt.error || "Gagal dari server"); 
             } catch(e) { alert("Gagal Push Data: Cek Koneksi Internet."); } 
-            finally { btn.innerHTML = orgText; btn.disabled = false; }
+            finally { button.innerHTML = orgText; button.disabled = false; }
         }
 
         async function pullFromGSheets(btn) {
             if(!confirm("📥 Tarik data akan MENIMPA seluruh data di memori HP ini dengan data dari Spreadsheet. Lanjutkan?")) return; 
-            const orgText = btn.innerHTML; 
+            const button = btn && btn.innerHTML ? btn : document.createElement('button');
+            const orgText = button.innerHTML; 
             try { 
-                btn.innerHTML = '⏳ Tunggu...'; btn.disabled = true; 
+                button.innerHTML = '⏳ Tunggu...'; button.disabled = true; 
                 const res = await fetch(GAS_URL); const rt = await res.json(); 
                 if(rt.status !== "sukses") throw new Error("Gagal mengambil data"); 
                 
@@ -941,10 +977,9 @@
                 
                 tx.oncomplete = () => { alert("📥 Pull data berhasil! Sistem telah diperbarui."); refreshAllData(); }; 
             } catch(e) { alert("Gagal Pull Data. Pastikan internet menyala dan URL valid."); } 
-            finally { btn.innerHTML = orgText; btn.disabled = false; }
+            finally { button.innerHTML = orgText; button.disabled = false; }
         }
 
-        // --- EXPORT CSV ---
         function dlCSV(c, f) { const b=new Blob([c],{type:'text/csv;charset=utf-8;'}), l=document.createElement("a"); l.href=URL.createObjectURL(b); l.download=f; l.style.display='none'; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
         async function exportCSV() {
             try {
@@ -953,7 +988,8 @@
                 p.forEach(t => { 
                     const tid=String(t.id||''), tMetode=String(t.metode_pembayaran||''), tStat=String(t.status_pembayaran||'Lunas');
                     const tBayar=parseFloat(t.total_bayar)||0, tHpp=parseFloat(t.total_hpp)||0, tLaba=parseFloat(t.laba)||0;
-                    c += `"${tid}";"${t.tanggal_waktu||''}";"${t.nama_pelanggan||'Umum'}";"${tStat}";"${tMetode}";"${Array.isArray(t.detail_item)?t.detail_item.map(i=>`${i.qty||0}x ${i.nama||''}`).join(' | '):(t.detail_item||'')}";${tBayar};${tHpp};${tStat==='Hutang'||tStat==='Konsumsi'||tid.startsWith('MUT-')?0:(tLaba||(tBayar-tHpp))}\n`; 
+                    const items = parseDetailItem(t.detail_item, tBayar);
+                    c += `"${tid}";"${t.tanggal_waktu||''}";"${t.nama_pelanggan||'Umum'}";"${tStat}";"${tMetode}";"${items.map(i=>`${i.qty||1}x ${i.nama||''}`).join(' | ')}";${tBayar};${tHpp};${tStat==='Hutang'||tStat==='Konsumsi'||tid.startsWith('MUT-')?0:(tLaba||(tBayar-tHpp))}\n`; 
                 });
                 dlCSV(c, `Laporan_${filterStartDate||'Awal'}_${filterEndDate||'Akhir'}.csv`);
             } catch(e) {}
@@ -962,7 +998,7 @@
             try {
                 const pr=await getDBData('produk'), r=await getDBData('resep'), b=await getDBData('bahan_baku'), bM=b.reduce((a,x)=>({...a,[x.id]:x}),{}); if(pr.length===0) return alert("Kosong.");
                 let c = "\uFEFFKategori;Menu;Jual;HPP Modal;Laba Kotor;Resep\n";
-                pr.forEach(p => { let tH=0, ar=[]; r.filter(x=>x.id_produk===p.id).forEach(x=>{const bi=bM[x.id_bahan_baku]; if(bi){tH+=(parseFloat(bi.hpp)||0)*parseFloat(x.jumlah_dibutuhkan||0); ar.push(`${bi.nama_bahan} (${x.jumlah_dibutuhkan} ${bi.satuan})`);}}); c += `${p.kategori||''};"${p.nama_produk||''}";${p.harga_jual||0};${tH};${(p.harga_jual||0)-tH};"${ar.join(' | ')}"\n`; });
+                pr.forEach(p => { let tH=0, ar=[]; r.filter(x=>x.id_produk===p.id).forEach(x=>{const bi=bM[x.id_bahan_baku]; if(bi){tH+=(parseFloat(bi.hpp)||0)*parseFloat(x.jumlah_dibutuhkan||0); ar.push(`${bi.nama_bahan} (${x.jumlah_dibutuhkan} ${bi.satuan})`);}}); c += `${p.kategori||''};"${p.nama_produk||''}";${p.harga_jual||0};${tH};${(parseFloat(p.harga_jual)||0)-tH};"${ar.join(' | ')}"\n`; });
                 dlCSV(c, `Menu_Sekawan.csv`);
             } catch(e) {}
         }
@@ -971,11 +1007,11 @@
         try {
             const m = {"name":"SekawanPOS","short_name":"SekawanPOS","display":"standalone","background_color":"#f8fafc","theme_color":"#1e3a8a","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231e3a8a' rx='20'/%3E%3Ctext y='75' x='15' font-size='70'%3E%E2%98%95%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]};
             const l = document.createElement('link'); l.rel='manifest'; l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/json'})); document.head.appendChild(l);
-            const sw = `self.addEventListener('install',e=>self.skipWaiting()); self.addEventListener('fetch',e=>{if(e.request.url.includes('script.google')||e.request.url.includes('jsdelivr'))return; e.respondWith(fetch(e.request).catch(()=>new Response('Offline V9')));});`;
+            const sw = `self.addEventListener('install',e=>self.skipWaiting()); self.addEventListener('fetch',e=>{if(e.request.url.includes('script.google')||e.request.url.includes('jsdelivr'))return; e.respondWith(fetch(e.request).catch(()=>new Response('Offline V11')));});`;
             if('serviceWorker' in navigator) navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'text/javascript'}))).catch(()=>{});
-            window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); window.dp = e; document.getElementById('btn-install-pwa').classList.remove('hidden'); });
+            window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); window.dp = e; });
         } catch(e) { console.error("PWA Init Skipped"); }
-        async function installPWA() { if(window.dp) { window.dp.prompt(); const { outcome } = await window.dp.userChoice; if(outcome === 'accepted') document.getElementById('btn-install-pwa').classList.add('hidden'); window.dp = null; } }
+        async function installPWA() { if(window.dp) { window.dp.prompt(); const { outcome } = await window.dp.userChoice; if(outcome === 'accepted') document.getElementById('btn-install-pwa').classList.add('hidden'); window.dp = null; } else alert("Browser Anda belum mendukung atau Aplikasi sudah diinstal."); }
     </script>
 </body>
 </html>
