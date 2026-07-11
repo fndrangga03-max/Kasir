@@ -91,7 +91,7 @@
         </div>
     </header>
 
-    <!-- AREA KONTEN UTAMA -->
+    <!-- AREA KONTEN -->
     <main class="flex-1 w-full relative overflow-hidden bg-gray-50">
 
         <!-- HALAMAN 1: KASIR -->
@@ -114,7 +114,6 @@
                         <button onclick="filterKategori('Makanan')" id="btn-kat-Makanan" class="flex-1 sm:flex-none text-[10px] sm:text-xs bg-white border border-gray-300 text-gray-600 px-2 py-1.5 rounded-md shadow-sm hover:bg-gray-50 transition">Makanan</button>
                     </div>
                 </div>
-                <!-- Area Scroll Menu -->
                 <div class="flex-1 min-h-0 overflow-y-auto p-2 sm:p-4 bg-gray-50/50 relative">
                     <div id="product-grid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 pb-2"></div>
                 </div>
@@ -163,7 +162,7 @@
                         </div>
                         
                         <div class="flex gap-1 pt-1">
-                            <button onclick="processCheckout('none')" class="flex-1 bg-brand-main hover:bg-brand-dark text-white py-2 rounded-lg font-bold text-[11px] sm:text-xs transition shadow-md cursor-pointer">✅ Selesai</button>
+                            <button onclick="processCheckout('none')" class="flex-1 bg-brand-main hover:bg-brand-dark text-white py-1.5 sm:py-2 rounded-lg font-bold text-[11px] sm:text-xs transition shadow-md cursor-pointer">✅ Selesai</button>
                             <button onclick="processCheckout('pdf')" class="bg-orange-500 hover:bg-orange-600 text-white px-2.5 py-2 rounded-lg font-bold text-[11px] sm:text-xs transition shadow-md cursor-pointer">📄 PDF</button>
                             <button onclick="processCheckout('bluetooth')" class="bg-gray-800 hover:bg-black text-white px-2.5 py-2 rounded-lg font-bold text-[11px] sm:text-xs transition shadow-md cursor-pointer">🖨️ BT</button>
                         </div>
@@ -188,7 +187,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 pb-12">
                     <div class="bg-white rounded-xl shadow-md border border-gray-100 p-3 sm:p-5 flex flex-col min-h-[50vh]">
                         <h2 class="font-bold text-base sm:text-lg text-brand-dark mb-3 border-b pb-2 flex-shrink-0">📦 Bahan Baku & HPP</h2>
                         <form id="form-bahan" onsubmit="addBahanBaku(event)" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4 flex-shrink-0">
@@ -308,10 +307,10 @@
                     </button>
                 </div>
 
-                <!-- TABEL BUKU KAS (DIPERBAIKI AGAR BISA KLIK) -->
-                <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden w-full flex flex-col">
+                <!-- TABEL BUKU KAS -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden w-full flex flex-col min-h-[50vh]">
                     <div class="p-3 bg-brand-soft border-b border-brand-light font-bold text-brand-dark text-xs sm:text-sm flex-shrink-0">Riwayat Buku Kas & Penjualan</div>
-                    <div class="overflow-x-auto w-full" style="max-height: 50vh;">
+                    <div class="overflow-x-auto w-full flex-1">
                         <table class="w-full text-[10px] sm:text-xs text-left relative">
                             <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm z-20">
                                 <tr>
@@ -376,7 +375,7 @@
     <!-- KODE JAVASCRIPT UTAMA (100% ANTI CRASH) -->
     <script>
         const generateID = (prefix) => prefix + '-' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random() * 1000);
-        const DB_NAME = 'SekawanKafe_DB'; const DB_VERSION = 12; // Upgrade V12
+        const DB_NAME = 'SekawanKafe_DB'; const DB_VERSION = 13; // Upgrade V13 - Safe Pull
         let db, cart = [], currentKategoriFilter = 'Semua', globalProdukMap = {};
         let filterStartDate = '', filterEndDate = '';
         let chartTrend = null, chartPayment = null, chartTopMenu = null;
@@ -397,9 +396,11 @@
             return [{ qty: 1, nama: String(raw || 'Item Kasir'), harga: parseFloat(defaultHarga)||0 }];
         }
 
-        function formatRp(n) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(parseFloat(n) || 0); }
+        function formatRp(n) { 
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(parseFloat(n) || 0); 
+        }
 
-        // INISIALISASI DB
+        // INISIALISASI DB AMAN
         try {
             const req = window.indexedDB.open(DB_NAME, DB_VERSION);
             req.onupgradeneeded = (e) => {
@@ -410,13 +411,18 @@
                 if (!db.objectStoreNames.contains('penjualan')) db.createObjectStore('penjualan', { keyPath: 'id' });
             };
             req.onsuccess = (e) => { db = e.target.result; checkAndSeedData(); };
-            req.onerror = () => { alert("Peringatan: Gagal memuat Memori Lokal."); };
-        } catch (error) {}
+            req.onerror = () => { alert("Peringatan: Gagal memuat Memori Lokal. Pastikan tidak dalam Mode Incognito super ketat."); };
+        } catch (error) { console.error("IndexDB Err:", error); }
         
         function getDBData(s) { 
             return new Promise((resolve) => { 
                 if(!db) return resolve([]);
-                try { const tx = db.transaction([s], 'readonly'); const r = tx.objectStore(s).getAll(); r.onsuccess = () => resolve(r.result || []); r.onerror = () => resolve([]); } catch(e) { resolve([]); }
+                try {
+                    const tx = db.transaction([s], 'readonly'); 
+                    const r = tx.objectStore(s).getAll(); 
+                    r.onsuccess = () => resolve(r.result || []); 
+                    r.onerror = () => resolve([]); 
+                } catch(e) { resolve([]); }
             }); 
         }
         
@@ -426,22 +432,13 @@
                 txCount.objectStore('produk').count().onsuccess = (e) => {
                     if (e.target.result === 0) {
                         const tx = db.transaction(['bahan_baku', 'produk', 'resep'], 'readwrite');
-                        dumpBahan.forEach(b => tx.objectStore('bahan_baku').put(b)); dumpProduk.forEach(p => tx.objectStore('produk').put(p)); dumpResep.forEach(r => tx.objectStore('resep').put(r));
+                        dumpBahan.forEach(b => tx.objectStore('bahan_baku').put(b)); 
+                        dumpProduk.forEach(p => tx.objectStore('produk').put(p)); 
+                        dumpResep.forEach(r => tx.objectStore('resep').put(r));
                         tx.oncomplete = () => refreshAllData();
                     } else refreshAllData();
                 };
             } catch(e) {}
-        }
-
-        function resetDatabaseToDump() {
-            if(!confirm('🚨 Semua data lama akan dihapus dan diganti Default Kafe. Lanjutkan?')) return;
-            const tx = db.transaction(['bahan_baku', 'produk', 'resep', 'penjualan'], 'readwrite');
-            ['bahan_baku', 'produk', 'resep', 'penjualan'].forEach(s => tx.objectStore(s).clear());
-            tx.oncomplete = () => {
-                const t2 = db.transaction(['bahan_baku', 'produk', 'resep'], 'readwrite');
-                dumpBahan.forEach(b => t2.objectStore('bahan_baku').put(b)); dumpProduk.forEach(p => t2.objectStore('produk').put(p)); dumpResep.forEach(r => t2.objectStore('resep').put(r));
-                t2.oncomplete = () => { alert("Reset berhasil!"); refreshAllData(); };
-            };
         }
 
         // --- SISTEM TABS ---
@@ -463,20 +460,159 @@
 
         async function refreshAllData() {
             try {
-                const allP = await getDBData('produk'); globalProdukMap = allP.reduce((acc, p) => ({...acc, [p.id]: p}), {});
+                const allP = await getDBData('produk');
+                globalProdukMap = allP.reduce((acc, p) => ({...acc, [p.id]: p}), {});
                 await renderProdukKasir(); await renderTabelBahan(); await renderTabelProduk(); await populateDropdowns(); await renderLaporan();
             } catch(e) {}
         }
 
+        // --- CLOUD SYNC & PULL AMAN ---
+        async function pushToGSheets(btn) {
+            const button = btn && btn.innerHTML ? btn : document.createElement('button');
+            const orgText = button.innerHTML; 
+            try { 
+                const p = await getDBData('penjualan'), b = await getDBData('bahan_baku'), pr = await getDBData('produk'), r = await getDBData('resep'); 
+                if(p.length === 0 && pr.length === 0 && b.length === 0) return alert("Data kosong, tidak ada yang perlu dikirim."); 
+                
+                button.innerHTML = '⏳ Tunggu...'; button.disabled = true; 
+                
+                const urlNoCache = GAS_URL + (GAS_URL.includes('?') ? '&' : '?') + 'ts=' + new Date().getTime();
+                const res = await fetch(urlNoCache, { method: 'POST', body: JSON.stringify({penjualan: p, bahan_baku: b, produk: pr, resep: r}) }); 
+                const rt = await res.json(); 
+                
+                if(rt.status === "sukses") alert("☁️ Push data berhasil!\n(Semua jurnal tersimpan di Spreadsheet)"); 
+                else throw new Error(rt.error || "Gagal dari server Google."); 
+            } catch(e) { alert("❌ Gagal Push Data.\nDetail: " + e.message); } 
+            finally { button.innerHTML = orgText; button.disabled = false; }
+        }
+
+        async function pullFromGSheets(btn) {
+            if(!confirm("📥 Tarik data akan MENIMPA seluruh data di memori HP ini dengan data dari Spreadsheet. Lanjutkan?")) return; 
+            const button = btn && btn.innerHTML ? btn : document.createElement('button');
+            const orgText = button.innerHTML; 
+            try { 
+                button.innerHTML = '⏳ Tunggu...'; button.disabled = true; 
+                
+                const urlNoCache = GAS_URL + (GAS_URL.includes('?') ? '&' : '?') + 'ts=' + new Date().getTime();
+                const res = await fetch(urlNoCache, { cache: "no-store" }); 
+                const rt = await res.json(); 
+                
+                if(rt.status !== "sukses") throw new Error(rt.error || "Server Spreadsheet menolak akses."); 
+                
+                const c = rt.data || {};
+                const tx = db.transaction(['penjualan', 'bahan_baku', 'produk', 'resep'], 'readwrite'); 
+                
+                ['penjualan', 'bahan_baku', 'produk', 'resep'].forEach(s => tx.objectStore(s).clear()); 
+                
+                (c.bahan_baku || []).forEach(b => { 
+                    if(b['Nama Bahan']) tx.objectStore('bahan_baku').put({ id: String(b.ID || generateID('B')), nama_bahan: String(b['Nama Bahan']), stok_saat_ini: parseFloat(b.Stok) || 0, satuan: String(b.Satuan || 'Pcs'), hpp: parseFloat(b.HPP) || 0 }); 
+                }); 
+                (c.produk || []).forEach(p => { 
+                    if(p['Nama Produk']) tx.objectStore('produk').put({ id: String(p.ID || generateID('P')), nama_produk: String(p['Nama Produk']), kategori: String(p.Kategori || 'Minuman'), harga_jual: parseFloat(p['Harga Jual']) || 0 }); 
+                }); 
+                (c.resep || []).forEach(r => { 
+                    if(r['ID Produk'] && r['ID Bahan Baku']) tx.objectStore('resep').put({ id: String(r.ID || generateID('R')), id_produk: String(r['ID Produk']), id_bahan_baku: String(r['ID Bahan Baku']), jumlah_dibutuhkan: parseFloat(r.Jumlah) || 0 }); 
+                }); 
+                (c.penjualan || []).forEach(t => { 
+                    if(t['ID Transaksi']) {
+                        let dt = []; 
+                        try { 
+                            if(t.Raw_JSON) dt = JSON.parse(t.Raw_JSON); else dt = t['Detail Item'] || [];
+                        } catch(e) { dt = t['Detail Item'] || []; } 
+                        
+                        tx.objectStore('penjualan').put({ 
+                            id: String(t['ID Transaksi']), tanggal_waktu: String(t.Waktu || ''), metode_pembayaran: String(t.Metode || ''), 
+                            nama_pelanggan: String(t.Pelanggan || 'Umum'), status_pembayaran: String(t.Status || 'Lunas'), 
+                            total_bayar: parseFloat(t.Omset) || 0, total_hpp: parseFloat(t.HPP) || 0, laba: parseFloat(t.Laba) || 0, detail_item: dt 
+                        }); 
+                    }
+                }); 
+                
+                tx.oncomplete = () => { alert("📥 Pull data berhasil! Sistem telah diperbarui."); refreshAllData(); }; 
+                tx.onerror = () => { throw new Error("Gagal menyimpan ke memori browser (Storage Error)."); };
+            } catch(e) { alert("❌ Gagal Pull Data.\nDetail: " + e.message + "\n\nPastikan koneksi stabil."); } 
+            finally { button.innerHTML = orgText; button.disabled = false; }
+        }
+
+        // --- SISTEM PELUNASAN, PDF & PRINT AMAN ---
+        async function reprintReceipt(id, type) {
+            try {
+                const txL = await getDBData('penjualan'); 
+                const t = txL.find(x => String(x.id).trim() === String(id).trim()); 
+                if(!t) return alert("❌ Data transaksi tidak ditemukan di memori.");
+                
+                if(type === 'bluetooth'){ 
+                    if(!navigator.bluetooth) return alert("❌ Browser tidak support Bluetooth."); 
+                    await printReceipt(t, t.total_bayar, 0); 
+                } else {
+                    alert("⏳ Sedang menyiapkan PDF, klik OK dan mohon tunggu sebentar...");
+                    await generatePDF(t, t.total_bayar, 0); 
+                }
+            } catch (e) { alert("❌ Gagal mencetak: " + e.message); }
+        }
+
+        async function lunasiTransaksi(id) {
+            try {
+                const mc = prompt('Uang pelunasan masuk ke Kas Mana?\nKetik 1 = Tunai\nKetik 2 = QRIS', '1'); 
+                if(!mc) return; 
+                let m = 'Tunai'; if(mc === '2') m = 'QRIS'; else if(mc !== '1') return alert("Batal melunasi.");
+
+                const pData = await getDBData('penjualan');
+                const t = pData.find(x => String(x.id).trim() === String(id).trim());
+                if(!t) return alert("❌ Transaksi tidak ditemukan.");
+
+                t.status_pembayaran = 'Lunas'; 
+                t.metode_pembayaran = m; 
+
+                const tx = db.transaction(['penjualan'], 'readwrite');
+                tx.objectStore('penjualan').put(t); 
+                tx.oncomplete = () => { alert(`✨ Kasbon berhasil dilunasi ke kas ${m}!`); refreshAllData(); };
+            } catch (e) { alert("❌ Gagal melunasi: " + e.message); }
+        }
+
+        async function batalkanTransaksi(id) {
+            try {
+                if(!confirm('Yakin ingin membatalkan transaksi ini?\n\nJika ada stok yang terpotong, sistem akan mengembalikannya otomatis.')) return;
+                
+                const trxList = await getDBData('penjualan');
+                const trx = trxList.find(t => String(t.id).trim() === String(id).trim());
+                if(!trx) return alert("❌ Transaksi tidak ditemukan.");
+
+                const allResep = await getDBData('resep'), allBahan = await getDBData('bahan_baku'), bahanMap = allBahan.reduce((acc, b) => ({...acc, [b.id]: b}), {});
+                let stockToRestore = {};
+                
+                const isManualTrx = String(trx.id).startsWith('INC-') || String(trx.id).startsWith('EXP-') || String(trx.id).startsWith('MUT-') || String(trx.id).startsWith('NON-');
+                
+                if(!isManualTrx && Array.isArray(trx.detail_item)) {
+                    trx.detail_item.forEach(item => {
+                        allResep.filter(r => r.id_produk === item.id).forEach(r => {
+                            if (!stockToRestore[r.id_bahan_baku]) stockToRestore[r.id_bahan_baku] = 0;
+                            stockToRestore[r.id_bahan_baku] += (parseFloat(r.jumlah_dibutuhkan) * parseFloat(item.qty));
+                        });
+                    });
+                }
+
+                const txWrite = db.transaction(['penjualan', 'bahan_baku'], 'readwrite');
+                const storeBahan = txWrite.objectStore('bahan_baku');
+                for (const [id_bahan, qty_restore] of Object.entries(stockToRestore)) {
+                    const b = bahanMap[id_bahan];
+                    if (b) { b.stok_saat_ini = parseFloat((parseFloat(b.stok_saat_ini) + parseFloat(qty_restore)).toFixed(2)); storeBahan.put(b); }
+                }
+
+                txWrite.objectStore('penjualan').delete(String(id).trim());
+                txWrite.oncomplete = () => { alert("✅ Transaksi berhasil dibatalkan!"); refreshAllData(); };
+            } catch(e) { alert("❌ Kesalahan saat membatalkan."); }
+        }
+
+        // --- SISTEM LAPORAN UI ---
         function applyDateFilter() { filterStartDate = document.getElementById('filter-start').value; filterEndDate = document.getElementById('filter-end').value; renderLaporan(); }
         function resetDateFilter() { document.getElementById('filter-start').value = ''; document.getElementById('filter-end').value = ''; filterStartDate = ''; filterEndDate = ''; renderLaporan(); }
 
-        // --- MANUAL JURNAL ---
         function toggleManualUI(sel) {
             const v = sel.value, mw = document.getElementById('manual-metode-wrapper'), mutw = document.getElementById('manual-mutasi-wrapper'), btn = document.getElementById('btn-manual-submit');
-            if (v === 'Mutasi') { mw.classList.add('hidden'); mutw.classList.remove('hidden'); mutw.classList.add('flex'); btn.className = "w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; } 
-            else if (v === 'NonKas') { mw.classList.add('hidden'); mutw.classList.remove('flex'); mutw.classList.add('hidden'); btn.className = "w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; } 
-            else { mw.classList.remove('hidden'); mutw.classList.remove('flex'); mutw.classList.add('hidden'); if(v === 'Pengeluaran') btn.className = "w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; else btn.className = "w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; }
+            if (v === 'Mutasi') { mw.classList.add('hidden'); mutw.classList.remove('hidden'); mutw.classList.add('flex'); btn.className = "w-full sm:w-auto bg-indigo-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; } 
+            else if (v === 'NonKas') { mw.classList.add('hidden'); mutw.classList.remove('flex'); mutw.classList.add('hidden'); btn.className = "w-full sm:w-auto bg-purple-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; } 
+            else { mw.classList.remove('hidden'); mutw.classList.remove('flex'); mutw.classList.add('hidden'); if(v === 'Pengeluaran') btn.className = "w-full sm:w-auto bg-red-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; else btn.className = "w-full sm:w-auto bg-green-600 text-white px-3 py-2 rounded-md text-xs font-bold shadow-sm transition cursor-pointer"; }
         }
 
         async function addTransaksiManual() {
@@ -514,7 +650,123 @@
             db.transaction(['penjualan'], 'readwrite').objectStore('penjualan').add(data).onsuccess = () => { alert(`✅ Saldo ${metode} disesuaikan.`); refreshAllData(); };
         }
 
-        // --- KASIR UI ---
+        async function renderLaporan() {
+            try {
+                let pD = await getDBData('penjualan'); 
+                pD.sort((a, b) => String(b.id).localeCompare(String(a.id))); 
+                if (filterStartDate || filterEndDate) pD = pD.filter(t => { const d = (t.tanggal_waktu || '').split(' ')[0] || ''; return (!filterStartDate || d >= filterStartDate) && (!filterEndDate || d <= filterEndDate); });
+                
+                let tO=0, tL=0, tP=0, tE=0, kT=0, kQ=0;
+                
+                pD.forEach(t => {
+                    try {
+                        const tid = String(t.id || ''); const tMetode = String(t.metode_pembayaran || 'Tunai'); const tStat = String(t.status_pembayaran || 'Lunas');
+                        const tBayar = parseFloat(t.total_bayar) || 0; const tHpp = parseFloat(t.total_hpp) || 0; const tLaba = parseFloat(t.laba) || 0;
+                        
+                        if (tid.startsWith('EXP-')) { tE+=tHpp; tL-=tHpp; if(tMetode==='Tunai') kT-=tHpp; if(tMetode==='QRIS') kQ-=tHpp; }
+                        else if (tid.startsWith('INC-')) { tL+=tBayar; if(tMetode==='Tunai') kT+=tBayar; if(tMetode==='QRIS') kQ+=tBayar; }
+                        else if (tid.startsWith('NON-')) { tE+=tHpp; tL-=tHpp; }
+                        else if (tid.startsWith('MUT-')) { if(tMetode==='Tunai_QRIS') { kT-=tBayar; kQ+=tBayar; } else if(tMetode==='QRIS_Tunai') { kQ-=tBayar; kT+=tBayar; } }
+                        else {
+                            if (tStat === 'Hutang') { tP+=tBayar; }
+                            else if (tStat === 'Konsumsi') { tL+=tLaba; tE+=tHpp; }
+                            else {
+                                const items = parseDetailItem(t.detail_item, tBayar);
+                                let oriTot = items.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||1)),0);
+                                tO+=oriTot; tL += tLaba || (oriTot - tHpp);
+                                if (tMetode.startsWith('Split')) { const mMatch = tMetode.match(/T:(\d+), Q:(\d+)/); if(mMatch) { kT+=parseFloat(mMatch[1]); kQ+=parseFloat(mMatch[2]); } } 
+                                else if (tMetode === 'QRIS') kQ+=oriTot; else kT+=oriTot;
+                            }
+                        }
+                    } catch(err) {}
+                });
+                
+                document.getElementById('stat-tunai').innerText=formatRp(kT); document.getElementById('stat-qris').innerText=formatRp(kQ); document.getElementById('stat-pengeluaran').innerText=formatRp(tE); document.getElementById('stat-omset').innerText=formatRp(tO); document.getElementById('stat-laba').innerText=formatRp(tL); document.getElementById('stat-piutang').innerText=formatRp(tP); document.getElementById('stat-trx').innerText=pD.filter(t=>{const id=String(t.id||'').trim(); return !id.startsWith('EXP-')&&!id.startsWith('INC-')&&!id.startsWith('NON-')&&!id.startsWith('MUT-')&&(t.status_pembayaran!=='Konsumsi');}).length;
+
+                document.getElementById('table-laporan').innerHTML = pD.map(t => {
+                    try {
+                        const tid = String(t.id||'').trim(); const tid_safe = tid.replace(/'/g, "\\'");
+                        const tTgl = String(t.tanggal_waktu||''); const tPel = String(t.nama_pelanggan||'Umum'); const tMetode = String(t.metode_pembayaran||'Tunai'); const tStat = String(t.status_pembayaran||'Lunas');
+                        const tBayar = parseFloat(t.total_bayar)||0; const tHpp = parseFloat(t.total_hpp)||0; const tLaba = parseFloat(t.laba)||0;
+                        const iE = tid.startsWith('EXP-'), iI = tid.startsWith('INC-'), iN = tid.startsWith('NON-'), iM = tid.startsWith('MUT-'), iH = tStat==='Hutang', iK = tStat==='Konsumsi';
+                        
+                        const items = parseDetailItem(t.detail_item, tBayar);
+                        let iStr = items.map(i=>`${i.qty||1}x ${i.nama||'Item'}`).join(', ');
+                        
+                        let sB = '';
+                        if(iM) sB = `<span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200 text-[10px]">MUTASI</span>`;
+                        else if(iN) sB = `<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold border border-purple-200 text-[10px]">NON-KAS</span>`;
+                        else if(iE) sB = `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold border border-red-200 text-[10px]"><span class="hidden sm:inline">KELUAR </span>(${tMetode})</span>`;
+                        else if(iI) sB = `<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold border border-blue-200 text-[10px]"><span class="hidden sm:inline">MASUK </span>(${tMetode})</span>`;
+                        else if(iH) sB = `<span class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded font-bold border border-pink-200 text-[10px]">KASBON</span>`;
+                        else if(iK) sB = `<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold border border-purple-200 text-[10px]">KONSUMSI</span>`;
+                        else sB = `<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold border border-green-200 text-[10px]"><span class="hidden sm:inline">LUNAS </span>(${tMetode.split(' ')[0]})</span>`;
+
+                        let aBtn = `<button onclick="batalkanTransaksi('${tid_safe}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1.5 rounded text-[10px] w-full shadow-sm mt-1 border border-red-100 cursor-pointer">❌ Batal</button>`;
+                        if(!iE && !iI && !iN && !iM) {
+                            const pG = `<div class="flex gap-1 w-full"><button onclick="reprintReceipt('${tid_safe}', 'bluetooth')" class="bg-gray-100 hover:bg-gray-200 px-1 py-1 rounded text-[10px] flex-1 shadow-sm border border-gray-200 cursor-pointer">🖨️ BT</button><button onclick="reprintReceipt('${tid_safe}', 'pdf')" class="bg-orange-50 hover:bg-orange-100 text-orange-600 px-1 py-1 rounded text-[10px] flex-1 shadow-sm border border-orange-200 cursor-pointer">📄 PDF</button></div>`;
+                            if(iH) aBtn = `<button onclick="lunasiTransaksi('${tid_safe}')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1.5 rounded text-[10px] mb-1 w-full font-bold shadow-sm cursor-pointer">💸 Lunasi</button>` + pG + aBtn; else aBtn = pG + aBtn;
+                        }
+                        
+                        let oriTot = items.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||1)),0);
+                        let oT = '';
+                        if(iM) { const p=tMetode.split('_'); oT = `<span class="text-indigo-600 text-[10px]">${p[0]||'?'} ➡️ ${p[1]||'?'}</span><br><span class="font-bold">${formatRp(tBayar)}</span>`; }
+                        else if(iE || iN) oT = `<span class="text-red-500">- ${formatRp(tHpp)}</span>`;
+                        else if(iI) oT = `<span class="text-brand-main">+ ${formatRp(tBayar)}</span>`;
+                        else if(iK) oT = `<span class="text-gray-400">Rp 0</span>`;
+                        else oT = formatRp(oriTot);
+
+                        let lT = '';
+                        if(iM) lT = `<span class="text-gray-400">-</span>`;
+                        else if(iH) lT = `<span class="text-gray-400 italic">Menunggu</span>`;
+                        else if(iE || iN) lT = `<span class="text-red-500 font-bold">- ${formatRp(tHpp)}</span>`;
+                        else if(iK) lT = `<span class="text-purple-600 font-bold">${formatRp(tLaba)}</span>`;
+                        else lT = `<span class="text-teal-600 font-bold">${formatRp(tLaba||(oriTot-tHpp))}</span>`;
+                        
+                        return `
+                        <tr class="hover:bg-brand-soft border-b border-gray-100">
+                            <td class="p-2 sm:p-3 align-top sm:align-middle">
+                                <div class="font-bold text-gray-700 whitespace-nowrap">${tTgl}</div>
+                                <div class="text-brand-dark mt-0.5 whitespace-nowrap">👤 ${tPel}</div>
+                                <div class="text-[8px] text-gray-400 font-mono">${tid.split('-')[1]||tid}</div>
+                                <div class="sm:hidden mt-1.5 pt-1.5 border-t border-gray-200 text-[10px] text-gray-600 leading-tight w-full whitespace-normal break-words">${iStr}</div>
+                            </td>
+                            <td class="p-1 sm:p-2 text-center text-[9px] sm:text-[10px] leading-tight align-top sm:align-middle">${sB}</td>
+                            <td class="p-2 hidden sm:table-cell min-w-[120px] text-gray-600 leading-tight align-top sm:align-middle">${iStr}</td>
+                            <td class="p-2 font-bold text-right align-top sm:align-middle">${oT}</td>
+                            <td class="p-2 text-right bg-teal-50/20 align-top sm:align-middle">${lT}</td>
+                            <td class="p-1 sm:p-2 min-w-[80px] align-top sm:align-middle">${aBtn}</td>
+                        </tr>`;
+                    } catch (err) { return `<tr><td colspan="6" class="text-center text-red-500 text-xs py-2">Error format data</td></tr>`; }
+                }).join('');
+            } catch(e) {}
+        }
+
+        // --- EXPORT CSV ---
+        function dlCSV(c, f) { const b=new Blob([c],{type:'text/csv;charset=utf-8;'}), l=document.createElement("a"); l.href=URL.createObjectURL(b); l.download=f; l.style.display='none'; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+        async function exportCSV() {
+            try {
+                let p=await getDBData('penjualan'); if(p.length===0) return alert("Kosong."); if(filterStartDate||filterEndDate) p=p.filter(t=>{const d=(t.tanggal_waktu||'').split(' ')[0]; return (!filterStartDate||d>=filterStartDate)&&(!filterEndDate||d<=filterEndDate);}); if(p.length===0) return alert("Kosong di tgl ini.");
+                let c = "\uFEFFID Transaksi;Waktu;Pelanggan;Status;Metode;Item;Nilai (Rp);HPP (Rp);Laba Cair (Rp)\n";
+                p.forEach(t => { 
+                    const tid=String(t.id||''), tMetode=String(t.metode_pembayaran||''), tStat=String(t.status_pembayaran||'Lunas');
+                    const tBayar=parseFloat(t.total_bayar)||0, tHpp=parseFloat(t.total_hpp)||0, tLaba=parseFloat(t.laba)||0;
+                    const items = parseDetailItem(t.detail_item, tBayar);
+                    c += `"${tid}";"${t.tanggal_waktu||''}";"${t.nama_pelanggan||'Umum'}";"${tStat}";"${tMetode}";"${items.map(i=>`${i.qty||1}x ${i.nama||''}`).join(' | ')}";${tBayar};${tHpp};${tStat==='Hutang'||tStat==='Konsumsi'||tid.startsWith('MUT-')?0:(tLaba||(tBayar-tHpp))}\n`; 
+                });
+                dlCSV(c, `Laporan_${filterStartDate||'Awal'}_${filterEndDate||'Akhir'}.csv`);
+            } catch(e) {}
+        }
+        async function exportMenuCSV() {
+            try {
+                const pr=await getDBData('produk'), r=await getDBData('resep'), b=await getDBData('bahan_baku'), bM=b.reduce((a,x)=>({...a,[x.id]:x}),{}); if(pr.length===0) return alert("Kosong.");
+                let c = "\uFEFFKategori;Menu;Jual;HPP Modal;Laba Kotor;Resep\n";
+                pr.forEach(p => { let tH=0, ar=[]; r.filter(x=>x.id_produk===p.id).forEach(x=>{const bi=bM[x.id_bahan_baku]; if(bi){tH+=(parseFloat(bi.hpp)||0)*parseFloat(x.jumlah_dibutuhkan||0); ar.push(`${bi.nama_bahan} (${x.jumlah_dibutuhkan} ${bi.satuan})`);}}); c += `${p.kategori||''};"${p.nama_produk||''}";${p.harga_jual||0};${tH};${(parseFloat(p.harga_jual)||0)-tH};"${ar.join(' | ')}"\n`; });
+                dlCSV(c, `Menu_Sekawan.csv`);
+            } catch(e) {}
+        }
+
+        // --- KASIR LOGIC & BAYAR ---
         function filterKategori(kat) {
             currentKategoriFilter = kat;
             ['Semua', 'Minuman', 'Makanan'].forEach(k => {
@@ -596,7 +848,53 @@
             else con.classList.add('hidden');
         }
 
-        // --- CHECKOUT & PRINT ---
+        async function processCheckout(aType) {
+            if (cart.length === 0) return alert("Keranjang kosong!");
+            if (aType === 'bluetooth' && !navigator.bluetooth) return alert("Browser ini tidak mendukung cetak BT.");
+            
+            const totalBayar = parseFloat(document.getElementById('cart-total').dataset.value);
+            const metode = document.getElementById('payment-method').value;
+            const namaPelanggan = document.getElementById('customer-name').value.trim();
+            
+            let csh = 0, kembalian = 0, methodStr = metode, status_pembayaran = 'Lunas';
+
+            if (metode === 'Kasbon') { 
+                if (!namaPelanggan) { alert("Nama Peminjam WAJIB diisi!"); document.getElementById('customer-name').focus(); return; } 
+                status_pembayaran = 'Hutang'; 
+            } else if (metode === 'Konsumsi') {
+                if (!namaPelanggan) { alert("Nama Pegawai WAJIB diisi!"); document.getElementById('customer-name').focus(); return; } 
+                status_pembayaran = 'Konsumsi';
+            } else if (metode === 'Split Bill') {
+                const sQris = parseFloat(document.getElementById('split-qris').value || 0); const sCash = parseFloat(document.getElementById('split-cash').value || 0); csh = sQris + sCash;
+                if (csh < totalBayar) return alert("Total Split Bill kurang!");
+                kembalian = csh - totalBayar; methodStr = `Split Bill (T:${sCash - kembalian}, Q:${sQris})`;
+            } else {
+                csh = parseFloat(document.getElementById('cash-amount').value || (metode==='QRIS'?totalBayar:0));
+                if (csh < totalBayar) return alert(`Uang kurang!`);
+                kembalian = csh - totalBayar;
+            }
+
+            try {
+                const aR = await getDBData('resep'), aB = await getDBData('bahan_baku'), bMap = aB.reduce((acc, b) => ({...acc, [b.id]: b}), {});
+                let kBt = {}, tHpp = 0;
+                cart.forEach(i => { aR.filter(r => r.id_produk === i.id).forEach(r => { if (!kBt[r.id_bahan_baku]) kBt[r.id_bahan_baku] = 0; kBt[r.id_bahan_baku] += (parseFloat(r.jumlah_dibutuhkan) * parseFloat(i.qty)); }); });
+                for (const [id_b, qt] of Object.entries(kBt)) { const b = bMap[id_b]; if (!b || parseFloat(b.stok_saat_ini) < qt) return alert(`Stok Habis: ${b ? b.nama_bahan : '?'}`); tHpp += (parseFloat(b.hpp) || 0) * qt; }
+                
+                let actTotal = (status_pembayaran === 'Konsumsi') ? 0 : totalBayar; const labaBersih = actTotal - tHpp;
+                const txW = db.transaction(['bahan_baku', 'penjualan'], 'readwrite'); const sB = txW.objectStore('bahan_baku');
+                for (const [id_b, qt] of Object.entries(kBt)) { const b = bMap[id_b]; b.stok_saat_ini = parseFloat((parseFloat(b.stok_saat_ini) - qt).toFixed(2)); sB.put(b); }
+                const tgl = new Date().toISOString().slice(0, 16).replace('T', ' ');
+                const dP = { id: generateID('TRX'), tanggal_waktu: tgl, nama_pelanggan: namaPelanggan || 'Umum', status_pembayaran: status_pembayaran, total_bayar: actTotal, total_hpp: tHpp, laba: labaBersih, metode_pembayaran: methodStr, detail_item: JSON.parse(JSON.stringify(cart)) };
+                txW.objectStore('penjualan').add(dP);
+                txW.oncomplete = async () => {
+                    if (aType === 'bluetooth') { try{if (await printReceipt(dP, csh, kembalian)) alert("✅ Struk Dicetak!"); else alert("✅ Disimpan, Gagal Cetak BT.");}catch(e){alert("✅ Disimpan, BT Error: "+e.message);} } 
+                    else if (aType === 'pdf') { try{alert("⏳ Menyiapkan PDF..."); await generatePDF(dP, csh, kembalian); alert("✅ PDF Diunduh!");}catch(e){alert("✅ Disimpan, PDF Error: "+e.message);} } 
+                    else alert("✅ Transaksi Berhasil!");
+                    clearCart(); refreshAllData();
+                };
+            } catch (e) { alert("Error sistem checkout: " + e.message); }
+        }
+
         async function printReceipt(trxData, cashAmount, kembalian) {
             try {
                 const device = await navigator.bluetooth.requestDevice({ filters: [{ services: ['000018f0-0000-1000-8000-00805f9b34fb'] }, { namePrefix: 'MPT' }, { namePrefix: 'POS' }, { namePrefix: 'Printer' }], optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] });
@@ -658,57 +956,6 @@
             } catch(e) { throw new Error(e); return false; }
         }
 
-        async function processCheckout(aType) {
-            if (cart.length === 0) return alert("Keranjang kosong!");
-            if (aType === 'bluetooth' && !navigator.bluetooth) return alert("Browser ini tidak mendukung cetak BT.");
-            
-            const totalBayar = parseFloat(document.getElementById('cart-total').dataset.value);
-            const metode = document.getElementById('payment-method').value;
-            const namaPelanggan = document.getElementById('customer-name').value.trim();
-            
-            let csh = 0, kembalian = 0, methodStr = metode, status_pembayaran = 'Lunas';
-
-            if (metode === 'Kasbon') { 
-                if (!namaPelanggan) { alert("Nama Peminjam WAJIB!"); document.getElementById('customer-name').focus(); return; } 
-                status_pembayaran = 'Hutang'; 
-            } else if (metode === 'Konsumsi') {
-                if (!namaPelanggan) { alert("Nama Pegawai WAJIB!"); document.getElementById('customer-name').focus(); return; } 
-                status_pembayaran = 'Konsumsi';
-            } else if (metode === 'Split Bill') {
-                const sQris = parseFloat(document.getElementById('split-qris').value || 0); const sCash = parseFloat(document.getElementById('split-cash').value || 0); csh = sQris + sCash;
-                if (csh < totalBayar) return alert("Total Split Bill kurang!");
-                kembalian = csh - totalBayar; methodStr = `Split Bill (T:${sCash - kembalian}, Q:${sQris})`;
-            } else {
-                csh = parseFloat(document.getElementById('cash-amount').value || (metode==='QRIS'?totalBayar:0));
-                if (csh < totalBayar) return alert(`Uang kurang!`);
-                kembalian = csh - totalBayar;
-            }
-
-            try {
-                const aR = await getDBData('resep'), aB = await getDBData('bahan_baku'), bMap = aB.reduce((acc, b) => ({...acc, [b.id]: b}), {});
-                let kBt = {}, tHpp = 0;
-                cart.forEach(i => { aR.filter(r => r.id_produk === i.id).forEach(r => { if (!kBt[r.id_bahan_baku]) kBt[r.id_bahan_baku] = 0; kBt[r.id_bahan_baku] += (parseFloat(r.jumlah_dibutuhkan) * parseFloat(i.qty)); }); });
-                for (const [id_b, qt] of Object.entries(kBt)) { const b = bMap[id_b]; if (!b || parseFloat(b.stok_saat_ini) < qt) return alert(`Stok Habis: ${b ? b.nama_bahan : '?'}`); tHpp += (parseFloat(b.hpp) || 0) * qt; }
-                
-                let actTotal = (status_pembayaran === 'Konsumsi') ? 0 : totalBayar; const labaBersih = actTotal - tHpp;
-                const txW = db.transaction(['bahan_baku', 'penjualan'], 'readwrite'); const sB = txW.objectStore('bahan_baku');
-                for (const [id_b, qt] of Object.entries(kBt)) { const b = bMap[id_b]; b.stok_saat_ini = parseFloat((parseFloat(b.stok_saat_ini) - qt).toFixed(2)); sB.put(b); }
-                const tgl = new Date().toISOString().slice(0, 16).replace('T', ' ');
-                const dP = { id: generateID('TRX'), tanggal_waktu: tgl, nama_pelanggan: namaPelanggan || 'Umum', status_pembayaran: status_pembayaran, total_bayar: actTotal, total_hpp: tHpp, laba: labaBersih, metode_pembayaran: methodStr, detail_item: JSON.parse(JSON.stringify(cart)) };
-                txW.objectStore('penjualan').add(dP);
-                txW.oncomplete = async () => {
-                    if (aType === 'bluetooth') { 
-                        try { if (await printReceipt(dP, csh, kembalian)) alert("✅ Struk Dicetak!"); else alert("✅ Disimpan, Gagal Cetak."); } catch(e){ alert("✅ Disimpan, BT Error: "+e.message); }
-                    } 
-                    else if (aType === 'pdf') { 
-                        try { await generatePDF(dP, csh, kembalian); alert("✅ PDF Diunduh!"); } catch(e){ alert("✅ Disimpan, PDF Error: "+e.message); }
-                    } 
-                    else alert("✅ Transaksi Berhasil!");
-                    clearCart(); refreshAllData();
-                };
-            } catch (e) { alert("Error sistem checkout: " + e.message); }
-        }
-
         // --- MENU & STOK ---
         function editProduk(id) {
             const tx = db.transaction('produk', 'readwrite'), store = tx.objectStore('produk');
@@ -722,7 +969,7 @@
         }
         function editBahan(id) {
             const tx = db.transaction('bahan_baku', 'readwrite'), store = tx.objectStore('bahan_baku');
-            store.get(id).onsuccess = e => { const b = e.target.result; if (!b) return; const nN = prompt("Nama Bahan Baku:", b.nama_bahan); if (nN) { b.nama_bahan = nN.trim(); store.put(b); } }; tx.oncomplete = () => refreshAllData();
+            store.get(id).onsuccess = e => { const b = e.target.result; if (!b) return; const nN = prompt("Nama Bahan:", b.nama_bahan); if (nN) { b.nama_bahan = nN.trim(); store.put(b); } }; tx.oncomplete = () => refreshAllData();
         }
         function addProduk(e) {
             e.preventDefault(); const n = document.getElementById('produk-nama').value.trim(), h = parseFloat(document.getElementById('produk-harga').value), k = document.getElementById('produk-kategori').value;
@@ -778,141 +1025,7 @@
             } catch(e) {}
         }
 
-        // --- SISTEM LAPORAN AMAN ---
-        async function reprintReceipt(id, type) {
-            try {
-                const tx = await getDBData('penjualan'); 
-                const t = tx.find(x => String(x.id).trim() === String(id).trim()); 
-                if(!t) return alert("❌ Data transaksi tidak ditemukan di memori.");
-                
-                if(type === 'bluetooth'){ 
-                    if(!navigator.bluetooth) return alert("❌ Browser tidak support Bluetooth."); 
-                    await printReceipt(t, t.total_bayar, 0); 
-                } else {
-                    alert("⏳ Sedang menyiapkan PDF, mohon tunggu...");
-                    await generatePDF(t, t.total_bayar, 0); 
-                }
-            } catch (e) { alert("❌ Gagal mencetak: " + e.message); }
-        }
-
-        async function lunasiTransaksi(id) {
-            try {
-                const mc = prompt('Uang pelunasan masuk ke Kas Mana?\nKetik 1 = Tunai\nKetik 2 = QRIS', '1'); 
-                if(!mc) return; 
-                let m = 'Tunai'; if(mc === '2') m = 'QRIS'; else if(mc !== '1') return alert("Batal melunasi.");
-
-                const pData = await getDBData('penjualan');
-                const t = pData.find(x => String(x.id).trim() === String(id).trim());
-                if(!t) return alert("❌ Transaksi tidak ditemukan.");
-
-                t.status_pembayaran = 'Lunas'; 
-                t.metode_pembayaran = m; 
-
-                const tx = db.transaction(['penjualan'], 'readwrite');
-                tx.objectStore('penjualan').put(t); 
-                tx.oncomplete = () => { alert(`✨ Kasbon berhasil dilunasi ke kas ${m}!`); refreshAllData(); };
-            } catch (e) { alert("❌ Gagal melunasi: " + e.message); }
-        }
-
-        async function renderLaporan() {
-            try {
-                let pD = await getDBData('penjualan'); 
-                pD.sort((a, b) => String(b.id).localeCompare(String(a.id))); 
-                
-                if (filterStartDate || filterEndDate) {
-                    pD = pD.filter(t => { 
-                        const d = (t.tanggal_waktu || '').split(' ')[0] || '';
-                        return (!filterStartDate || d >= filterStartDate) && (!filterEndDate || d <= filterEndDate); 
-                    });
-                }
-                
-                let tO=0, tL=0, tP=0, tE=0, kT=0, kQ=0;
-                
-                pD.forEach(t => {
-                    try {
-                        const tid = String(t.id || '').trim(); const tMetode = String(t.metode_pembayaran || 'Tunai'); const tStat = String(t.status_pembayaran || 'Lunas');
-                        const tBayar = parseFloat(t.total_bayar) || 0; const tHpp = parseFloat(t.total_hpp) || 0; const tLaba = parseFloat(t.laba) || 0;
-                        
-                        if (tid.startsWith('EXP-')) { tE+=tHpp; tL-=tHpp; if(tMetode==='Tunai') kT-=tHpp; if(tMetode==='QRIS') kQ-=tHpp; }
-                        else if (tid.startsWith('INC-')) { tL+=tBayar; if(tMetode==='Tunai') kT+=tBayar; if(tMetode==='QRIS') kQ+=tBayar; }
-                        else if (tid.startsWith('NON-')) { tE+=tHpp; tL-=tHpp; }
-                        else if (tid.startsWith('MUT-')) { if(tMetode==='Tunai_QRIS') { kT-=tBayar; kQ+=tBayar; } else if(tMetode==='QRIS_Tunai') { kQ-=tBayar; kT+=tBayar; } }
-                        else {
-                            if (tStat === 'Hutang') { tP+=tBayar; }
-                            else if (tStat === 'Konsumsi') { tL+=tLaba; tE+=tHpp; }
-                            else {
-                                const items = parseDetailItem(t.detail_item, tBayar);
-                                let oriTot = items.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||1)),0);
-                                tO+=oriTot; tL += tLaba || (oriTot - tHpp);
-                                if (tMetode.startsWith('Split')) { const mMatch = tMetode.match(/T:(\d+), Q:(\d+)/); if(mMatch) { kT+=parseFloat(mMatch[1]); kQ+=parseFloat(mMatch[2]); } } 
-                                else if (tMetode === 'QRIS') kQ+=oriTot; else kT+=oriTot;
-                            }
-                        }
-                    } catch(err) {}
-                });
-                
-                document.getElementById('stat-tunai').innerText=formatRp(kT); document.getElementById('stat-qris').innerText=formatRp(kQ); document.getElementById('stat-pengeluaran').innerText=formatRp(tE); document.getElementById('stat-omset').innerText=formatRp(tO); document.getElementById('stat-laba').innerText=formatRp(tL); document.getElementById('stat-piutang').innerText=formatRp(tP); document.getElementById('stat-trx').innerText=pD.filter(t=>{const id=String(t.id||'').trim(); return !id.startsWith('EXP-')&&!id.startsWith('INC-')&&!id.startsWith('NON-')&&!id.startsWith('MUT-')&&(t.status_pembayaran!=='Konsumsi');}).length;
-
-                document.getElementById('table-laporan').innerHTML = pD.map(t => {
-                    try {
-                        const tid = String(t.id||'').trim(); const tid_safe = tid.replace(/'/g, "\\'");
-                        const tTgl = String(t.tanggal_waktu||''); const tPel = String(t.nama_pelanggan||'Umum'); const tMetode = String(t.metode_pembayaran||'Tunai'); const tStat = String(t.status_pembayaran||'Lunas');
-                        const tBayar = parseFloat(t.total_bayar)||0; const tHpp = parseFloat(t.total_hpp)||0; const tLaba = parseFloat(t.laba)||0;
-                        const iE = tid.startsWith('EXP-'), iI = tid.startsWith('INC-'), iN = tid.startsWith('NON-'), iM = tid.startsWith('MUT-'), iH = tStat==='Hutang', iK = tStat==='Konsumsi';
-                        
-                        const items = parseDetailItem(t.detail_item, tBayar);
-                        let iStr = items.map(i=>`${i.qty||1}x ${i.nama||'Item'}`).join(', ');
-                        
-                        let sB = '';
-                        if(iM) sB = `<span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200 text-[10px]">MUTASI</span>`;
-                        else if(iN) sB = `<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold border border-purple-200 text-[10px]">NON-KAS</span>`;
-                        else if(iE) sB = `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold border border-red-200 text-[10px]"><span class="hidden sm:inline">KELUAR </span>(${tMetode})</span>`;
-                        else if(iI) sB = `<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold border border-blue-200 text-[10px]"><span class="hidden sm:inline">MASUK </span>(${tMetode})</span>`;
-                        else if(iH) sB = `<span class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded font-bold border border-pink-200 text-[10px]">KASBON</span>`;
-                        else if(iK) sB = `<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold border border-purple-200 text-[10px]">KONSUMSI</span>`;
-                        else sB = `<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold border border-green-200 text-[10px]"><span class="hidden sm:inline">LUNAS </span>(${tMetode.split(' ')[0]})</span>`;
-
-                        let aBtn = `<button onclick="batalkanTransaksi('${tid_safe}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1.5 rounded text-[10px] w-full shadow-sm mt-1 border border-red-100 cursor-pointer">❌ Batal</button>`;
-                        if(!iE && !iI && !iN && !iM) {
-                            const pG = `<div class="flex gap-1 w-full"><button onclick="reprintReceipt('${tid_safe}', 'bluetooth')" class="bg-gray-100 hover:bg-gray-200 px-1 py-1 rounded text-[10px] flex-1 shadow-sm border border-gray-200 cursor-pointer">🖨️ BT</button><button onclick="reprintReceipt('${tid_safe}', 'pdf')" class="bg-orange-50 hover:bg-orange-100 text-orange-600 px-1 py-1 rounded text-[10px] flex-1 shadow-sm border border-orange-200 cursor-pointer">📄 PDF</button></div>`;
-                            if(iH) aBtn = `<button onclick="lunasiTransaksi('${tid_safe}')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1.5 rounded text-[10px] mb-1 w-full font-bold shadow-sm cursor-pointer">💸 Lunasi</button>` + pG + aBtn; else aBtn = pG + aBtn;
-                        }
-                        
-                        let oriTot = items.reduce((s,x)=>s+(parseFloat(x.harga||0)*parseFloat(x.qty||1)),0);
-                        let oT = '';
-                        if(iM) { const p=tMetode.split('_'); oT = `<span class="text-indigo-600 text-[10px]">${p[0]||'?'} ➡️ ${p[1]||'?'}</span><br><span class="font-bold">${formatRp(tBayar)}</span>`; }
-                        else if(iE || iN) oT = `<span class="text-red-500">- ${formatRp(tHpp)}</span>`;
-                        else if(iI) oT = `<span class="text-brand-main">+ ${formatRp(tBayar)}</span>`;
-                        else if(iK) oT = `<span class="text-gray-400">Rp 0</span>`;
-                        else oT = formatRp(oriTot);
-
-                        let lT = '';
-                        if(iM) lT = `<span class="text-gray-400">-</span>`;
-                        else if(iH) lT = `<span class="text-gray-400 italic">Menunggu</span>`;
-                        else if(iE || iN) lT = `<span class="text-red-500 font-bold">- ${formatRp(tHpp)}</span>`;
-                        else if(iK) lT = `<span class="text-purple-600 font-bold">${formatRp(tLaba)}</span>`;
-                        else lT = `<span class="text-teal-600 font-bold">${formatRp(tLaba||(oriTot-tHpp))}</span>`;
-                        
-                        return `
-                        <tr class="hover:bg-brand-soft border-b border-gray-100">
-                            <td class="p-2 sm:p-3 align-top sm:align-middle">
-                                <div class="font-bold text-gray-700 whitespace-nowrap">${tTgl}</div>
-                                <div class="text-brand-dark mt-0.5 whitespace-nowrap">👤 ${tPel}</div>
-                                <div class="text-[8px] text-gray-400 font-mono">${tid.split('-')[1]||tid}</div>
-                                <div class="sm:hidden mt-1.5 pt-1.5 border-t border-gray-200 text-[10px] text-gray-600 leading-tight w-full whitespace-normal break-words">${iStr}</div>
-                            </td>
-                            <td class="p-1 sm:p-2 text-center text-[9px] sm:text-[10px] leading-tight align-top sm:align-middle">${sB}</td>
-                            <td class="p-2 hidden sm:table-cell min-w-[120px] text-gray-600 leading-tight align-top sm:align-middle">${iStr}</td>
-                            <td class="p-2 font-bold text-right align-top sm:align-middle">${oT}</td>
-                            <td class="p-2 text-right bg-teal-50/20 align-top sm:align-middle">${lT}</td>
-                            <td class="p-1 sm:p-2 min-w-[80px] align-top sm:align-middle">${aBtn}</td>
-                        </tr>`;
-                    } catch (err) { return `<tr><td colspan="6" class="text-center text-red-500 text-xs py-2">Error membaca baris ini</td></tr>`; }
-                }).join('');
-            } catch(e) { console.error("Render Laporan Error:", e); }
-        }
-
-        // --- CHART JS ANALISIS AMAN ---
+        // --- TAB ANALISIS AMAN ---
         async function renderAnalisis() {
             if(typeof Chart === 'undefined') { document.getElementById('container-trend').innerHTML = '<p class="text-center text-gray-500 mt-10">Membutuhkan internet untuk grafik.</p>'; return; }
             try {
@@ -957,14 +1070,14 @@
             } catch(e) {console.error(e);}
         }
 
-        // --- PWA INIT ---
+        // PWA INIT (Aman & Anti-Crash)
         try {
             const m = {"name":"SekawanPOS","short_name":"SekawanPOS","display":"standalone","background_color":"#f8fafc","theme_color":"#1e3a8a","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231e3a8a' rx='20'/%3E%3Ctext y='75' x='15' font-size='70'%3E%E2%98%95%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]};
             const l = document.createElement('link'); l.rel='manifest'; l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/json'})); document.head.appendChild(l);
-            const sw = `self.addEventListener('install',e=>self.skipWaiting()); self.addEventListener('fetch',e=>{if(e.request.url.includes('script.google')||e.request.url.includes('jsdelivr'))return; e.respondWith(fetch(e.request).catch(()=>new Response('Offline V12')));});`;
+            const sw = `self.addEventListener('install',e=>self.skipWaiting()); self.addEventListener('fetch',e=>{if(e.request.url.includes('script.google')||e.request.url.includes('jsdelivr'))return; e.respondWith(fetch(e.request).catch(()=>new Response('Offline V13')));});`;
             if('serviceWorker' in navigator) navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'text/javascript'}))).catch(()=>{});
             window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); window.dp = e; document.getElementById('btn-install-pwa').classList.remove('hidden'); });
-        } catch(e) {}
+        } catch(e) { console.error("PWA Init Skipped"); }
         async function installPWA() { if(window.dp) { window.dp.prompt(); const { outcome } = await window.dp.userChoice; if(outcome === 'accepted') document.getElementById('btn-install-pwa').classList.add('hidden'); window.dp = null; } else alert("Browser Anda belum mendukung atau Aplikasi sudah diinstal."); }
     </script>
 </body>
